@@ -89,6 +89,12 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
 .music .num { color: var(--muted); font-size: 15px; }
 .tbp { margin: 6px 0 0; font-family: var(--ui); font-size: 13px; color: var(--muted); }
 
+.watch .video { position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--rule); }
+.watch iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.watch .cap { margin: 10px 2px 0; color: var(--muted); font-size: 16px; }
+.watch .cap b { color: var(--fg); font-weight: 500; }
+.watch .cap a { color: var(--navy); }
+
 footer { border-top: 1px solid var(--rule); padding-top: 18px; text-align: center; display: grid; gap: 4px; }
 footer .am { font-family: var(--display); letter-spacing: .3em; color: var(--gold); font-size: 13px; }
 footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
@@ -140,6 +146,14 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
       <li><b>Learn a section</b><span>Choose one phrase and it repeats until you have it.</span></li>
       <li><b>Tap any note</b><span>Hear the pitch, and playback starts from there.</span></li>
     </ol>
+  </section>
+
+  <section class="watch" aria-labelledby="watch-h">
+    <h2 id="watch-h">Why sacred art</h2>
+    <div class="video">
+      <iframe src="https://www.youtube-nocookie.com/embed/GZp32F8exFc" title="Sacred Art as the Only Hope for Reviving Culture, Jonathan Pageau" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+    </div>
+    <p class="cap"><b>Sacred Art as the Only Hope for Reviving Culture</b> · Jonathan Pageau, Shared Inheritance conference, May 2019. <a href="https://www.youtube.com/watch?v=GZp32F8exFc" target="_blank" rel="noopener">Watch on YouTube ↗</a></p>
   </section>
 
   <footer>
