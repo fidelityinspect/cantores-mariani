@@ -122,6 +122,17 @@ body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 .hint { margin: 0; color: var(--muted); font-size: 16px; }
 .loading { padding: 40px 12px; text-align: center; color: #5b6170; font-style: italic; }
 
+/* guitar chord diagrams */
+.diagrams { display: flex; flex-wrap: wrap; gap: 6px 10px; background: var(--paper); border-radius: 6px; padding: 10px 12px; }
+.diagram { margin: 0; }
+.diagram svg { display: block; }
+.diagram line { stroke: #3b4150; stroke-width: 1; }
+.diagram line.nut { stroke-width: 3; }
+.diagram .dot { fill: #1b1f2a; }
+.diagram .open { fill: none; stroke: #1b1f2a; stroke-width: 1.2; }
+.diagram .dname { font: 600 11px var(--ui); fill: #1b1f2a; }
+.diagram .dfr, .diagram .dmark { font: 9px var(--ui); fill: #3b4150; }
+
 /* YouTube practice tracks */
 .tracks { display: grid; gap: 10px; }
 .tracks h3 { font-family: var(--display); font-size: 13px; letter-spacing: .2em; color: var(--gold); margin: 0; font-weight: 500; text-transform: uppercase; }
@@ -162,8 +173,9 @@ footer a { color: var(--navy); }
     </div>
 
     <p class="status" id="status" aria-live="polite">Tap any note to hear it. Playback then starts from that note.</p>
+    <div class="diagrams" id="diagrams" hidden></div>
     <div class="sheet"><div id="score"><p class="loading">Setting the score…</p></div></div>
-    <p class="hint">Your part shows in blue once you pick it. Gold marks the notes sounding now.</p>
+    <p class="hint">Your part shows in blue once you pick it. Gold marks the notes sounding now. <span id="chord-note"></span></p>
   </section>
 
   <div class="player" role="group" aria-label="Player">
@@ -181,6 +193,12 @@ footer a { color: var(--navy); }
         <input type="range" id="vol-others" min="0" max="100" step="5" value="25">
         <output id="vol-others-out" for="vol-others">25%</output>
       </label>
+      <div class="group" aria-label="Chords">
+        <span class="label">Chords</span>
+        <button class="chip" id="ch-off" data-ch="off" aria-pressed="false">Off</button>
+        <button class="chip" id="ch-piano" data-ch="piano" aria-pressed="true">Piano</button>
+        <button class="chip" id="ch-guitar" data-ch="guitar" aria-pressed="false">Guitar</button>
+      </div>
       <div class="group" aria-label="Sound">
         <span class="label">Sound</span>
         <button class="chip" id="snd-voice" data-snd="voice" aria-pressed="true">Voices</button>
@@ -314,6 +332,34 @@ function abcPitch(n, barState) {
 }
 function abcLen(d) { return d === 1 ? "" : d === 2 ? "2" : d === 0.5 ? "/2" : d === 1.5 ? "3/2" : String(d); }
 
+// ---------- Chords, in E-flat, at the soprano note where each one starts ----------
+const CHORDS = [[0,"Eb"],[1,"Bb"],[2,"Eb"],[3,"Cm"],[4,"Bb"],[5,"Eb"],[11,"Ab"],[12,"Eb"],[13,"Bb"],
+  [15,"Eb"],[16,"Bb"],[17,"Eb"],[18,"Cm"],[19,"Bb"],[20,"Eb"],[22,"Bb"],[23,"Eb"],[24,"Ab"],[25,"Cm"],[26,"Bb"],[28,"Eb"],
+  [30,"Eb"],[33,"Cm"],[34,"G"],[35,"Cm"],[37,"Gm"],[40,"F"],[41,"Bb"],[42,"Eb"],[44,"Gm"],[45,"F"],[47,"Bb"],
+  [49,"Eb"],[52,"Cm"],[53,"G"],[54,"Cm"],[56,"Gm"],[59,"F"],[60,"Bb"],[61,"Eb"],[63,"Gm"],[64,"F"],[66,"Bb"],
+  [68,"Eb"],[70,"Gm"],[71,"Cm"],[73,"G"],[75,"Bb"],[77,"Ab"],[81,"Eb"],[83,"Ab"],[85,"Eb"],
+  [86,"Eb"],[89,"Ab"],[90,"Eb"],[91,"Fm"],[93,"Cm"],[95,"Bb/D"],[96,"Eb"],[97,"Ab"],[98,"Cm"],[99,"Bb"],[101,"Eb"],
+  [103,"Eb"],[104,"Cm"],[105,"Bb"],[107,"Ab"],[108,"Eb"],[109,"Fm"],[111,"Cm"],[113,"Bb/D"],[114,"Eb"],[115,"Ab"],[116,"Cm"],[117,"Bb"],[119,"Eb"]];
+const PC = { C: 0, "C#": 1, Db: 1, D: 2, "D#": 3, Eb: 3, E: 4, F: 5, "F#": 6, Gb: 6, G: 7, "G#": 8, Ab: 8, A: 9, "A#": 10, Bb: 10, B: 11 };
+const SPELL = {
+  flat:  ["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B"],
+  sharp: ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"],
+  shape: ["C", "C♯", "D", "E♭", "E", "F", "F♯", "G", "G♯", "A", "B♭", "B"]
+};
+let chordMode = "piano";   // off | piano | guitar
+function chordInfo() {
+  // returns {shift, spell, capo}: how chord names are shown for this choir and instrument
+  return { shift: ARR.trans, spell: ARR.sharps ? "sharp" : "flat" };
+}
+function chordName(name) {
+  const { shift, spell } = chordInfo();
+  const t = n => SPELL[spell][(PC[n] + shift + 12) % 12];
+  const [main, bass] = name.split("/");
+  const m = main.match(/^([A-G][b#]?)(.*)$/);
+  return t(m[1]) + m[2] + (bass ? "/" + t(bass) : "");
+}
+const chordAt = new Map(CHORDS.map(([b, n]) => [b, n]));
+
 function build(key) {
   arrKey = key; ARR = ARRS[key]; PART_NAMES = ARR.voices.map(x => x.name);
   notes = []; lineStartBeat = []; totalBeats = 0; startMap = new Map();
@@ -352,7 +398,8 @@ function build(key) {
         if (n.ferm) deco += "!fermata!";
         const eighth = n.dur === 0.5;
         if (!(eighth && prevEighth)) abc += " ";
-        startMap.set(abc.length, n);   // abcjs may count a note from its decorations
+        startMap.set(abc.length, n);   // abcjs may count a note from its annotations or decorations
+        if (v === 0 && chordMode !== "off" && chordAt.has(n.beat)) { abc += `"^${chordName(chordAt.get(n.beat))}"`; startMap.set(abc.length, n); }
         abc += deco;
         startMap.set(abc.length, n);
         abc += abcPitch(n, barState) + abcLen(n.dur);
@@ -657,14 +704,62 @@ function setArrangement(key) {
   document.getElementById("arr-label").textContent = ARR.label;
   document.querySelectorAll("[data-arr]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.arr === key)));
   layout = ""; render();
-  chooseSection(sec);
+  chooseSection(sec); chordNote();
   statusEl.textContent = key === "ttb"
     ? "Men's version: Tenor I takes the melody, Tenor II the middle line, Bass the low line, in G major."
     : "Mixed choir version: soprano, alto, tenor and bass, in E♭ major, as printed.";
 }
 document.querySelectorAll("[data-arr]").forEach(b => b.addEventListener("click", () => setArrangement(b.dataset.arr)));
+function chordNote() {
+  const el = document.getElementById("chord-note");
+  if (chordMode === "off") { el.textContent = ""; return; }
+  el.textContent = `Chords in ${ARR.trans ? "G" : "E♭"} major, as sung${chordMode === "guitar" ? "; fingerings are above the score" : ""}.`;
+  drawDiagrams();
+}
+// Guitar fingerings, low E to high e: x = don't play, 0 = open, n = fret
+const SHAPES = {
+  "E♭": "xx1343", "B♭": "x13331", "Cm": "x35543", "A♭": "466544", "G": "320003", "Gm": "355333",
+  "F": "133211", "Fm": "133111", "B♭/D": "xx0331",
+  "D": "xx0232", "Em": "022000", "C": "x32010", "B": "x24442", "Bm": "x24432", "A": "x02220", "Am": "x02210", "D/F♯": "2x0232"
+};
+function diagramSVG(name) {
+  const f = SHAPES[name]; if (!f) return "";
+  const frets = [...f].map(c => c === "x" ? -1 : +c), played = frets.filter(n => n > 0);
+  const lo = Math.min(...played), hi = Math.max(...played);
+  const base = hi > 4 ? lo : 1;                 // show higher positions from their lowest fret
+  const X = i => 10 + i * 10, Y = r => 22 + r * 12;
+  let g = `<text x="35" y="9" text-anchor="middle" class="dname">${name}</text>`;
+  for (let i = 0; i < 6; i++) g += `<line x1="${X(i)}" y1="${Y(0)}" x2="${X(i)}" y2="${Y(4)}"/>`;
+  for (let r = 0; r <= 4; r++) g += `<line x1="${X(0)}" y1="${Y(r)}" x2="${X(5)}" y2="${Y(r)}"${r === 0 && base === 1 ? ' class="nut"' : ""}/>`;
+  if (base > 1) g += `<text x="64" y="${Y(0) + 9}" class="dfr">${base}fr</text>`;
+  frets.forEach((n, i) => {
+    if (n < 0) g += `<text x="${X(i)}" y="${Y(0) - 3}" text-anchor="middle" class="dmark">×</text>`;
+    else if (n === 0) g += `<circle cx="${X(i)}" cy="${Y(0) - 6}" r="2.6" class="open"/>`;
+    else g += `<circle cx="${X(i)}" cy="${Y(n - base) + 6}" r="3.6" class="dot"/>`;
+  });
+  return `<figure class="diagram"><svg viewBox="0 0 74 74" width="74" height="74" role="img" aria-label="${name} guitar chord">${g}</svg></figure>`;
+}
+function drawDiagrams() {
+  const box = document.getElementById("diagrams");
+  if (chordMode !== "guitar") { box.hidden = true; box.innerHTML = ""; return; }
+  const used = [...new Set(CHORDS.map(([, n]) => chordName(n)))];
+  box.innerHTML = used.map(diagramSVG).join("");
+  box.hidden = false;
+}
+function rerenderChords() {
+  if (playing) stop();
+  const cue = cueNote ? { v: cueNote.v, beat: cueNote.beat } : null;
+  build(arrKey); layout = ""; render();
+  if (cue) setStartAt(notes.find(n => n.v === cue.v && n.beat === cue.beat) || null);
+  chordNote();
+}
+document.querySelectorAll("[data-ch]").forEach(b => b.addEventListener("click", () => {
+  chordMode = b.dataset.ch;
+  document.querySelectorAll("[data-ch]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  rerenderChords();
+}));
 fillParts();
-render();
+render(); chordNote();
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 200); });
 </script>
 </body>
