@@ -158,7 +158,7 @@ footer a { color: var(--navy); }
   <section class="piece" aria-labelledby="piece-title">
     <div class="piece-head">
       <h2 id="piece-title">Ave Maria</h2>
-      <p class="attrib"><b>Jacob Arcadelt</b> (c. 1505–1568), arr. <b>Pierre-Louis Dietsch</b> (1808–1865) · SATB · E♭ major</p>
+      <p class="attrib"><b>Jacob Arcadelt</b> (c. 1505–1568), arr. <b>Pierre-Louis Dietsch</b> (1808–1865) · <span id="arr-label">TTB · G major (men's voices)</span></p>
     </div>
 
     <p class="status" id="status" aria-live="polite">Tap any note to hear it. Playback then starts from that note.</p>
@@ -168,6 +168,11 @@ footer a { color: var(--navy); }
 
   <div class="player" role="group" aria-label="Player">
     <div class="settings" id="settings" hidden>
+      <div class="group" aria-label="Choir">
+        <span class="label">Choir</span>
+        <button class="chip" id="arr-ttb" data-arr="ttb" aria-pressed="true">Men (TTB)</button>
+        <button class="chip" id="arr-satb" data-arr="satb" aria-pressed="false">Mixed (SATB)</button>
+      </div>
       <label class="tempo" for="vol-mine"><span class="label" id="vol-mine-label">Your part</span>
         <input type="range" id="vol-mine" min="0" max="100" step="5" value="100">
         <output id="vol-mine-out" for="vol-mine">100%</output>
@@ -194,13 +199,7 @@ footer a { color: var(--navy); }
     <div class="player-row">
       <button class="play" id="play"><svg viewBox="0 0 12 12" aria-hidden="true"><path id="play-icon" d="M2 1l9 5-9 5z"/></svg><span id="play-label">Play</span></button>
       <label class="part-pick" for="part"><span class="label">Part</span>
-        <select id="part">
-          <option value="-1">Full choir</option>
-          <option value="0">Soprano</option>
-          <option value="1">Alto</option>
-          <option value="2">Tenor</option>
-          <option value="3">Bass</option>
-        </select>
+        <select id="part"><option value="-1">Full choir</option></select>
       </label>
       <label class="part-pick" for="section"><span class="label">Section</span>
         <select id="section"></select>
@@ -281,75 +280,90 @@ const LINES = [
         "Eb3 C3 Bb2:2 Ab2 Eb3 F3:2 | C3:2 D3 Eb3 Ab2 C3 Bb2:2 Eb2:2!"],
     w: "san- _ cta Ma- ri- a, | o- ra, o- ra _ pro _ no- bis." }
 ];
-const VOICES = ["S", "A", "T", "B"];
-const PART_NAMES = ["Soprano", "Alto", "Tenor", "Bass"];
+// ---------- Arrangements: the same four printed lines, regrouped for the choir ----------
+// Men (TTB): Arcadelt's own three voices (soprano, alto, tenor lines) an octave down, raised to G major.
+const ARRS = {
+  satb: { label: "SATB · E♭ major", trans: 0, sharps: false, score: "{(V0 V1) | (V2 V3)}", voices: [
+    { name: "Soprano", src: 0, oct: 0, clef: "treble", stem: "up", form: 0 },
+    { name: "Alto", src: 1, oct: 0, clef: "treble", stem: "down", form: 1 },
+    { name: "Tenor", src: 2, oct: 0, clef: "bass", stem: "up", form: 2 },
+    { name: "Bass", src: 3, oct: 0, clef: "bass", stem: "down", form: 3 }] },
+  ttb: { label: "TTB · G major (men's voices)", trans: 4, sharps: true, score: "{(V0 V1) | V2}", voices: [
+    { name: "Tenor I", src: 0, oct: -1, clef: "treble-8", stem: "up", form: 2 },
+    { name: "Tenor II", src: 1, oct: -1, clef: "treble-8", stem: "down", form: 2 },
+    { name: "Bass", src: 2, oct: -1, clef: "bass", stem: "auto", form: 3 }] }
+};
+let arrKey = "satb", ARR = ARRS.satb, PART_NAMES = [];
 
 // ---------- Parse into notes ----------
 const BASE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 const KEY_FLATS = new Set(["B", "E", "A"]);
-const notes = [];            // {v, line, midi, beat, dur, ferm, letter, oct, acc, syl, abcStart, els}
-const lineStartBeat = [];
-let totalBeats = 0;
-LINES.forEach((ln, li) => {
-  lineStartBeat.push(totalBeats);
-  let lineLen = 0;
-  ln.v.forEach((src, v) => {
-    let beat = totalBeats;
-    const sylls = v === 0 ? ln.w.replace(/\|/g, " ").split(/\s+/).filter(Boolean) : [];
-    let si = 0, bar = 0;
-    src.split(/\s+/).forEach(tok => {
-      if (tok === "|") { bar++; return; }
-      const m = tok.match(/^([A-G])(b|n)?(\d)(?::([\d.]+))?(!)?$/);
-      if (!m) throw new Error("Bad token " + tok);
-      const [, letter, acc, oct, d, f] = m;
-      const dur = d ? parseFloat(d) : 1;
-      const midi = 12 * (+oct + 1) + BASE[letter] + (acc === "b" ? -1 : 0);
-      notes.push({ v, line: li, bar, midi, beat, dur, ferm: !!f, letter, oct: +oct, acc: acc || "", syl: sylls[si++] || "", els: [] });
-      beat += dur;
-    });
-    lineLen = Math.max(lineLen, beat - totalBeats);
-  });
-  totalBeats += lineLen;
-});
+let notes = [];              // {v, line, bar, midi, beat, dur, ferm, letter, oct, acc, syl, els}
+let lineStartBeat = [], totalBeats = 0, abc = "", startMap = new Map();
+function noteAt(pos) { for (const k of [0, 1, 2, 3, -1, 4, 5]) { const n = startMap.get(pos + k); if (n) return n; } return null; }
 
-// ---------- Build ABC, remembering where each note starts in the text ----------
 function abcPitch(n, barState) {
-  // alteration wanted: -1 flat, 0 natural
+  // alteration wanted: -1 flat, 0 natural (spelled in E-flat; the renderer transposes for display)
   const want = n.acc === "b" ? -1 : 0;
   const key = n.letter + n.oct;
   const cur = key in barState ? barState[key] : (KEY_FLATS.has(n.letter) ? -1 : 0);
   let pre = "";
   if (cur !== want) { pre = want === -1 ? "_" : "="; barState[key] = want; }
-  let p = n.oct >= 5 ? n.letter.toLowerCase() + "'".repeat(n.oct - 5) : n.letter + ",".repeat(4 - n.oct);
+  const p = n.oct >= 5 ? n.letter.toLowerCase() + "'".repeat(n.oct - 5) : n.letter + ",".repeat(4 - n.oct);
   return pre + p;
 }
 function abcLen(d) { return d === 1 ? "" : d === 2 ? "2" : d === 0.5 ? "/2" : d === 1.5 ? "3/2" : String(d); }
-let abc = "X:1\nM:none\nL:1/4\n%%score {(S A) | (T B)}\n" +
-  "V:S clef=treble stem=up\nV:A clef=treble stem=down\nV:T clef=bass stem=up\nV:B clef=bass stem=down\nK:Eb\n";
-const startMap = new Map();
-function noteAt(pos) { for (const k of [0, 1, 2, 3, -1, 4, 5]) { const n = startMap.get(pos + k); if (n) return n; } return null; }
-LINES.forEach((ln, li) => {
-  VOICES.forEach((name, v) => {
-    abc += `[V:${name}] `;
-    const ns = notes.filter(n => n.line === li && n.v === v);
-    let barState = {}, curBar = 0, prevEighth = false, dynI = 0;
-    ns.forEach((n, i) => {
-      if (n.bar !== curBar) { abc += "| "; barState = {}; curBar = n.bar; prevEighth = false; }
-      let deco = "";
-      if (v === 0 && ((i === 0) || (n.bar !== ns[i - 1].bar)) && ln.dyn[dynI]) deco += `!${ln.dyn[dynI++]}!`;
-      if (n.ferm) deco += "!fermata!";
-      const eighth = n.dur === 0.5;
-      if (!(eighth && prevEighth)) abc += " ";
-      startMap.set(abc.length, n);   // abcjs may count a note from its decorations
-      abc += deco;
-      startMap.set(abc.length, n);
-      abc += abcPitch(n, barState) + abcLen(n.dur);
-      prevEighth = eighth;
+
+function build(key) {
+  arrKey = key; ARR = ARRS[key]; PART_NAMES = ARR.voices.map(x => x.name);
+  notes = []; lineStartBeat = []; totalBeats = 0; startMap = new Map();
+  LINES.forEach((ln, li) => {
+    lineStartBeat.push(totalBeats);
+    let lineLen = 0;
+    ARR.voices.forEach((vd, v) => {
+      let beat = totalBeats;
+      const sylls = v === 0 ? ln.w.replace(/\|/g, " ").split(/\s+/).filter(Boolean) : [];
+      let si = 0, bar = 0;
+      ln.v[vd.src].split(/\s+/).forEach(tok => {
+        if (tok === "|") { bar++; return; }
+        const m = tok.match(/^([A-G])(b|n)?(\d)(?::([\d.]+))?(!)?$/);
+        if (!m) throw new Error("Bad token " + tok);
+        const [, letter, acc, o, d, f] = m;
+        const dur = d ? parseFloat(d) : 1, oct = +o + vd.oct;
+        const midi = 12 * (oct + 1) + BASE[letter] + (acc === "b" ? -1 : 0) + ARR.trans;
+        notes.push({ v, line: li, bar, midi, beat, dur, ferm: !!f, letter, oct, acc: acc || "", syl: sylls[si++] || "", els: [] });
+        beat += dur;
+      });
+      lineLen = Math.max(lineLen, beat - totalBeats);
     });
-    abc += li === LINES.length - 1 ? " |]\n" : " |\n";
-    if (v === 0) abc += "w: " + ln.w.replace(/\|/g, "|") + "\n";
+    totalBeats += lineLen;
   });
-});
+  abc = `X:1\nM:none\nL:1/4\n%%score ${ARR.score}\n` +
+    ARR.voices.map((vd, v) => `V:V${v} clef=${vd.clef}${vd.stem === "auto" ? "" : " stem=" + vd.stem}\n`).join("") + "K:Eb\n";
+  LINES.forEach((ln, li) => {
+    ARR.voices.forEach((vd, v) => {
+      abc += `[V:V${v}] `;
+      const ns = notes.filter(n => n.line === li && n.v === v);
+      let barState = {}, curBar = 0, prevEighth = false, dynI = 0;
+      ns.forEach((n, i) => {
+        if (n.bar !== curBar) { abc += "| "; barState = {}; curBar = n.bar; prevEighth = false; }
+        let deco = "";
+        if (v === 0 && ((i === 0) || (n.bar !== ns[i - 1].bar)) && ln.dyn[dynI]) deco += `!${ln.dyn[dynI++]}!`;
+        if (n.ferm) deco += "!fermata!";
+        const eighth = n.dur === 0.5;
+        if (!(eighth && prevEighth)) abc += " ";
+        startMap.set(abc.length, n);   // abcjs may count a note from its decorations
+        abc += deco;
+        startMap.set(abc.length, n);
+        abc += abcPitch(n, barState) + abcLen(n.dur);
+        prevEighth = eighth;
+      });
+      abc += li === LINES.length - 1 ? " |]\n" : " |\n";
+      if (v === 0) abc += "w: " + ln.w + "\n";
+    });
+  });
+}
+build("ttb");
 
 // ---------- Timing (fermatas held a little longer) ----------
 const tempoEl = document.getElementById("tempo");
@@ -374,7 +388,7 @@ const FORMANTS = [
 function vowel(v, dest) {
   const input = ctx.createGain(), sum = ctx.createGain();
   sum.gain.value = 5.6;
-  FORMANTS[v].forEach(([f, lvl, bw]) => {
+  FORMANTS[ARR.voices[v] ? ARR.voices[v].form : 3].forEach(([f, lvl, bw]) => {
     const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = f; bp.Q.value = f / bw;
     const g = ctx.createGain(); g.gain.value = lvl;
     input.connect(bp).connect(g).connect(sum);
@@ -527,7 +541,9 @@ function setStartAt(n) {
     statusEl.textContent = `${PART_NAMES[n.v]} ${noteName(n)}. Play starts at ${syl}, line ${n.line + 1}.`;
   } else statusEl.textContent = "Tap any note to hear it. Playback then starts from that note.";
 }
-function noteName(n) { return n.letter + (n.acc === "b" ? "♭" : n.acc === "n" ? "♮" : "") + n.oct; }
+const FLAT_NAMES = ["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B"];
+const SHARP_NAMES = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+function noteName(n) { return (ARR.sharps ? SHARP_NAMES : FLAT_NAMES)[n.midi % 12] + (Math.floor(n.midi / 12) - 1); }
 
 // ---------- Sections: each printed line is one phrase of the text ----------
 const GROUPS = [
@@ -603,7 +619,7 @@ function render() {
   layout = want;
   notes.forEach(n => n.els = []);
   const opts = {
-    add_classes: true, responsive: "resize", paddingleft: 4, paddingright: 4,
+    add_classes: true, responsive: "resize", visualTranspose: ARR.trans, paddingleft: 4, paddingright: 4,
     clickListener: (el) => {
       const n = noteAt(el.startChar); if (!n) return;
       ensureAudio();
@@ -626,6 +642,28 @@ function render() {
   paintMine();
   if (cueNote) cueNote.els.forEach(e => e.classList.add("cue"));
 }
+function fillParts() {
+  document.getElementById("part").innerHTML = `<option value="-1">Full choir</option>` +
+    PART_NAMES.map((n, i) => `<option value="${i}">${n}</option>`).join("");
+}
+function setArrangement(key) {
+  if (key === arrKey) return;
+  if (playing) stop();
+  const sec = sectionEl.value;
+  setStartAt(null);
+  build(key);
+  part = -1; fillParts(); syncVolumeLabels(); applyMix();
+  if (ctx) voiceIn = voiceGain.map((g, v) => vowel(v, g));
+  document.getElementById("arr-label").textContent = ARR.label;
+  document.querySelectorAll("[data-arr]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.arr === key)));
+  layout = ""; render();
+  chooseSection(sec);
+  statusEl.textContent = key === "ttb"
+    ? "Men's version: Tenor I takes the melody, Tenor II the middle line, Bass the low line, in G major."
+    : "Mixed choir version: soprano, alto, tenor and bass, in E♭ major, as printed.";
+}
+document.querySelectorAll("[data-arr]").forEach(b => b.addEventListener("click", () => setArrangement(b.dataset.arr)));
+fillParts();
 render();
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 200); });
 </script>
