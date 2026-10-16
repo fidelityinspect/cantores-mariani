@@ -634,7 +634,9 @@ const settingsBtn = document.getElementById("settings-btn"), settingsEl = docume
 const playerEl = document.querySelector(".player"), scroller = document.getElementById("scroller");
 let lastTop = 0, autoScrollUntil = 0;
 function tuck(hide) {
-  if (hide && !settingsEl.hidden) hide = false;              // never hide while Settings is open
+  if (hide && !settingsEl.hidden) {                          // scrolling down closes Settings too
+    settingsEl.hidden = true; settingsBtn.setAttribute("aria-expanded", "false");
+  }
   if (hide) playerEl.style.setProperty("--player-h", playerEl.offsetHeight + "px");
   playerEl.classList.toggle("tucked", hide);
 }
