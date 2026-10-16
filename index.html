@@ -125,6 +125,9 @@ button { font: inherit; cursor: pointer; }
 #score .cue, #score .cue path { fill: #9a3a2c; }
 #score .hl, #score .hl path { fill: var(--hl) !important; }
 #score .abcjs-lyric { fill: #3a4252; }
+/* hymnal-style chords sit just clear of the stems; dynamics move up with them */
+#score .abcjs-chord { transform: translateY(-9px); }
+#score .abcjs-dynamics, #score .abcjs-decoration { transform: translateY(-14px); }
 .hint { margin: 0; color: var(--muted); font-size: 16px; }
 .loading { padding: 40px 12px; text-align: center; color: #5b6170; font-style: italic; }
 
@@ -424,33 +427,13 @@ function build(key) {
     totalBeats += lineLen;
   });
   const showChords = chordDetail !== "off";
-  abc = `X:1\nM:none\nL:1/4\n%%score ${showChords ? "VC " : ""}${ARR.score}\n` +
-    (showChords ? "V:VC clef=none stafflines=0\n" : "") +
+  abc = `X:1\nM:none\nL:1/4\n%%score ${ARR.score}\n` +
     ARR.voices.map((vd, v) => `V:V${v} clef=${vd.clef}${vd.stem === "auto" ? "" : " stem=" + vd.stem}\n`).join("") + `K:${ARR.key}\n` + "%%gchordfont Helvetica 13\n";
   const ascii = t => t.replace(/♭/g, "b").replace(/♯/g, "#");
   LINES.forEach((ln, li) => {
-    if (showChords) {
-      // invisible spacer rests that carry the chord symbols; same bars and phone splits as the voices
-      const start = lineStartBeat[li], end = li + 1 < LINES.length ? lineStartBeat[li + 1] : totalBeats;
-      const s0 = notes.filter(n => n.line === li && n.v === 0);
-      const barAt = new Set(s0.filter((n, i) => i > 0 && n.bar !== s0[i - 1].bar).map(n => n.beat));
-      const cuts = new Set([start, end, ...barAt, ...[...chordAt.keys()].filter(b => b > start && b < end)]);
-      if (narrowBuild) NARROW_SPLITS.forEach(b => { if (b > start && b < end) cuts.add(b); });
-      const pts = [...cuts].sort((a, b) => a - b);
-      abc += "[V:VC] ";
-      if (li === 0 && twoRows()) abc += `"^Capo 3""^ "x2 `;
-      for (let i = 0; i < pts.length - 1; i++) {
-        const b = pts[i];
-        if (i > 0) abc += barAt.has(b) ? "| " : (narrowBuild && NARROW_SPLITS.has(b)) ? "[|] " : "";
-        const c = chordAt.get(b);
-        if (c) abc += twoRows() ? `"^${ascii(capoShape(c))}""^${ascii(chordName(c))}"` : `"^${ascii(chordName(c))}"`;   // guitar row above piano row
-        abc += "x" + abcLen(pts[i + 1] - b) + " ";
-      }
-      abc += li === LINES.length - 1 ? "|]\n" : "|\n";
-    }
     ARR.voices.forEach((vd, v) => {
       abc += `[V:V${v}] `;
-      if (li === 0 && showChords && twoRows()) abc += "x2 ";
+      if (li === 0 && showChords && twoRows()) abc += v === 0 ? `"Capo 3""" x2 ` : "x2 ";
       const ns = notes.filter(n => n.line === li && n.v === v);
       let barState = {}, curBar = 0, prevEighth = false, dynI = 0;
       ns.forEach((n, i) => {
@@ -459,6 +442,10 @@ function build(key) {
         let deco = "";
         if (v === 0 && ((i === 0) || (n.bar !== ns[i - 1].bar)) && ln.dyn[dynI]) deco += `!${ln.dyn[dynI++]}!`;
         if (n.ferm) deco += "!fermata!";
+        if (v === 0 && showChords && chordAt.has(n.beat)) {
+          const c = chordAt.get(n.beat);
+          deco = (twoRows() ? `"(${ascii(capoShape(c))})""${ascii(chordName(c))}"` : `"${ascii(chordName(c))}"`) + deco;
+        }
         const eighth = n.dur === 0.5;
         if (!(eighth && prevEighth)) abc += " ";
         startMap.set(abc.length, n);   // abcjs may count a note from its annotations or decorations
@@ -755,15 +742,6 @@ function render() {
     const n = noteAt(el.startChar);
     if (n && el.abselem) n.els = el.abselem.elemset.slice();
   }))));
-  if (chordDetail !== "off") {
-    document.querySelectorAll("#score .abcjs-staff-wrapper").forEach(w => {
-      [w.querySelector(".abcjs-staff"), w.querySelector(".abcjs-key-signature")].forEach(e => e && e.setAttribute("visibility", "hidden"));
-    });
-    tune.lines.forEach(line => {
-      const st = line.staff && line.staff[0];
-      if (st) st.voices[0].forEach(el => { if (el.el_type === "bar" && el.abselem) el.abselem.elemset.forEach(e => e.setAttribute("visibility", "hidden")); });
-    });
-  }
   paintMine();
   if (cueNote) cueNote.els.forEach(e => e.classList.add("cue"));
 }
