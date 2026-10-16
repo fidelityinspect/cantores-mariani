@@ -42,10 +42,15 @@
   --gold: #d6b25e; --gold-soft: #c9a24a; --rule: #28334f; --chip: #222d49; color-scheme: dark;
 }
 * { box-sizing: border-box; }
+html, body { height: 100%; }
 body {
   background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 19px; line-height: 1.55;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.scroller {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 32px 64px;
+  padding-block: 32px 40px;
 }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
 .wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 40px; }
@@ -87,7 +92,7 @@ button { font: inherit; cursor: pointer; }
 .tempo output { font-variant-numeric: tabular-nums; min-width: 52px; }
 /* the one player bar, fixed to the bottom of the screen */
 .player {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+  flex: none; z-index: 6;
   background: var(--surface); border-top: 1px solid var(--rule);
   box-shadow: 0 -8px 20px -16px rgba(10,20,50,.6);
   padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
@@ -105,10 +110,11 @@ button { font: inherit; cursor: pointer; }
 .icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .icon[aria-expanded="true"] { background: var(--navy); color: var(--surface); border-color: var(--navy); }
 .settings { max-width: 1040px; margin: 0 auto 10px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 12px 24px; }
-body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+
 .status { color: var(--muted); font-family: var(--ui); font-size: 14px; margin: 0; min-height: 1.3em; }
 .part-pick select { text-overflow: ellipsis; width: 100%; }
 #score .dim, #score .dim path { opacity: .28; }
+.chords-btn { flex: none; }
 @media (max-width: 560px) { .part-pick .label { display: none; } .player .play { min-width: 0; padding: 9px 14px; } .player-row { gap: 8px; } }
 
 /* the score */
@@ -132,6 +138,8 @@ body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 .diagram .open { fill: none; stroke: #1b1f2a; stroke-width: 1.2; }
 .diagram .dname { font: 600 11px var(--ui); fill: #1b1f2a; }
 .diagram .dfr, .diagram .dmark { font: 9px var(--ui); fill: #3b4150; }
+.diagram .dcap { font: 600 10px var(--ui); fill: #9a6a12; }
+.diagrams .capo { flex-basis: 100%; margin: 0 0 2px; font-family: var(--ui); font-size: 13px; color: #3a4252; }
 
 /* YouTube practice tracks */
 .tracks { display: grid; gap: 10px; }
@@ -159,7 +167,7 @@ footer a { color: var(--navy); }
 </style>
 </head>
 <body>
-<div class="wrap">
+<main class="scroller" id="scroller"><div class="wrap">
   <header>
     <img src="seal.png" alt="Seal of Cantores Mariani: an A and M monogram crowned by twelve stars, ringed with Musica Sacra et Polyphonia" width="440" height="440">
     <h1>Cantores Mariani</h1>
@@ -173,11 +181,35 @@ footer a { color: var(--navy); }
     </div>
 
     <p class="status" id="status" aria-live="polite">Tap any note to hear it. Playback then starts from that note.</p>
-    <div class="diagrams" id="diagrams" hidden></div>
     <div class="sheet"><div id="score"><p class="loading">Setting the score…</p></div></div>
+    <div class="diagrams" id="diagrams" hidden></div>
     <p class="hint">Your part shows in blue once you pick it. Gold marks the notes sounding now. <span id="chord-note"></span></p>
   </section>
 
+
+  <section class="tracks" aria-labelledby="tracks-title">
+    <h3 id="tracks-title">Hear your part sung</h3>
+    <div class="track-row">
+      <a href="https://www.youtube.com/watch?v=IJQYZl2zm_8" target="_blank" rel="noopener">Soprano</a>
+      <a href="https://www.youtube.com/watch?v=o8jm8BQ5Yeg" target="_blank" rel="noopener">Alto</a>
+      <a href="https://www.youtube.com/watch?v=OnDTUkSkAa0" target="_blank" rel="noopener">Tenor</a>
+      <a href="https://www.youtube.com/watch?v=O-j2xUlQTfU" target="_blank" rel="noopener">Bass</a>
+    </div>
+    <p class="tracks-note">Opens on YouTube.</p>
+  </section>
+
+  <section class="text" aria-label="Text and translation">
+    <div><h3>LATINE</h3>
+      <p class="la">Ave Maria, gratia plena, Dominus tecum, ave Maria.<br>Benedicta tu in mulieribus, et benedictus fructus ventris tui: Jesus.<br>Sancta Maria, ora pro nobis.</p></div>
+    <div><h3>ENGLISH</h3>
+      <p>Hail Mary, full of grace, the Lord is with thee, hail Mary.<br>Blessed art thou among women, and blessed is the fruit of thy womb: Jesus.<br>Holy Mary, pray for us.</p></div>
+  </section>
+
+  <footer>
+    <span>Arcadelt wrote the music as a three-voice French chanson, <i>Nous voyons que les hommes</i>; Dietsch fitted the Latin text and added the bass in the 1840s.</span>
+    <span>Notes entered from the free edition by Casey Rule at <a href="https://notenova.com/product/ave-maria-jacob-arcadelt-arr-pierre-louis-dietsch/" target="_blank" rel="noopener">NoteNova</a>; dynamics as printed there.</span>
+  </footer>
+</div></main>
   <div class="player" role="group" aria-label="Player">
     <div class="settings" id="settings" hidden>
       <div class="group" aria-label="Choir">
@@ -196,8 +228,13 @@ footer a { color: var(--navy); }
       <div class="group" aria-label="Chords">
         <span class="label">Chords</span>
         <button class="chip" id="ch-off" data-ch="off" aria-pressed="false">Off</button>
-        <button class="chip" id="ch-piano" data-ch="piano" aria-pressed="true">Piano</button>
-        <button class="chip" id="ch-guitar" data-ch="guitar" aria-pressed="false">Guitar</button>
+        <button class="chip" id="ch-simple" data-ch="simple" aria-pressed="false">Simple</button>
+        <button class="chip" id="ch-full" data-ch="full" aria-pressed="true">Full</button>
+      </div>
+      <div class="group" aria-label="Guitar chart">
+        <span class="label">Guitar chart</span>
+        <button class="chip" id="gt-off" data-gt="off" aria-pressed="true">Off</button>
+        <button class="chip" id="gt-on" data-gt="on" aria-pressed="false">On</button>
       </div>
       <div class="group" aria-label="Sound">
         <span class="label">Sound</span>
@@ -222,34 +259,12 @@ footer a { color: var(--navy); }
       <label class="part-pick" for="section"><span class="label">Section</span>
         <select id="section"></select>
       </label>
+      <button class="chip chords-btn" id="chords-btn" aria-pressed="true" title="Show or hide chords">Chords</button>
       <button class="icon" id="restart" aria-label="Play from the top" title="Play from the top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.5-3.6"/><path d="M3 2v3h3"/></svg></button>
       <button class="icon" id="settings-btn" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h7M13 4h1M2 12h1M7 12h7"/><circle cx="11" cy="4" r="2"/><circle cx="5" cy="12" r="2"/></svg></button>
     </div>
   </div>
 
-  <section class="tracks" aria-labelledby="tracks-title">
-    <h3 id="tracks-title">Hear your part sung</h3>
-    <div class="track-row">
-      <a href="https://www.youtube.com/watch?v=IJQYZl2zm_8" target="_blank" rel="noopener">Soprano</a>
-      <a href="https://www.youtube.com/watch?v=o8jm8BQ5Yeg" target="_blank" rel="noopener">Alto</a>
-      <a href="https://www.youtube.com/watch?v=OnDTUkSkAa0" target="_blank" rel="noopener">Tenor</a>
-      <a href="https://www.youtube.com/watch?v=O-j2xUlQTfU" target="_blank" rel="noopener">Bass</a>
-    </div>
-    <p class="tracks-note">Opens on YouTube.</p>
-  </section>
-
-  <section class="text" aria-label="Text and translation">
-    <div><h3>LATINE</h3>
-      <p class="la">Ave Maria, gratia plena, Dominus tecum, ave Maria.<br>Benedicta tu in mulieribus, et benedictus fructus ventris tui: Jesus.<br>Sancta Maria, ora pro nobis.</p></div>
-    <div><h3>ENGLISH</h3>
-      <p>Hail Mary, full of grace, the Lord is with thee, hail Mary.<br>Blessed art thou among women, and blessed is the fruit of thy womb: Jesus.<br>Holy Mary, pray for us.</p></div>
-  </section>
-
-  <footer>
-    <span>Arcadelt wrote the music as a three-voice French chanson, <i>Nous voyons que les hommes</i>; Dietsch fitted the Latin text and added the bass in the 1840s.</span>
-    <span>Notes entered from the free edition by Casey Rule at <a href="https://notenova.com/product/ave-maria-jacob-arcadelt-arr-pierre-louis-dietsch/" target="_blank" rel="noopener">NoteNova</a>; dynamics as printed there.</span>
-  </footer>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.4/dist/abcjs-basic-min.js"></script>
 <script>
@@ -301,12 +316,12 @@ const LINES = [
 // ---------- Arrangements: the same four printed lines, regrouped for the choir ----------
 // Men (TTB): Arcadelt's own three voices (soprano, alto, tenor lines) an octave down, raised to G major.
 const ARRS = {
-  satb: { label: "SATB · E♭ major", trans: 0, sharps: false, score: "{(V0 V1) | (V2 V3)}", voices: [
+  satb: { label: "SATB · E♭ major", trans: 0, steps: 0, key: "Eb", sig: { B: -1, E: -1, A: -1 }, sharps: false, score: "{(V0 V1) | (V2 V3)}", voices: [
     { name: "Soprano", src: 0, oct: 0, clef: "treble", stem: "up", form: 0 },
     { name: "Alto", src: 1, oct: 0, clef: "treble", stem: "down", form: 1 },
     { name: "Tenor", src: 2, oct: 0, clef: "bass", stem: "up", form: 2 },
     { name: "Bass", src: 3, oct: 0, clef: "bass", stem: "down", form: 3 }] },
-  ttb: { label: "TTB · G major (men's voices)", trans: 4, sharps: true, score: "{(V0 V1) | V2}", voices: [
+  ttb: { label: "TTB · G major (men's voices)", trans: 4, steps: 2, key: "G", sig: { F: 1 }, sharps: true, score: "{(V0 V1) | V2}", voices: [
     { name: "Tenor I", src: 0, oct: -1, clef: "treble-8", stem: "up", form: 2 },
     { name: "Tenor II", src: 1, oct: -1, clef: "treble-8", stem: "down", form: 2 },
     { name: "Bass", src: 2, oct: -1, clef: "bass", stem: "auto", form: 3 }] }
@@ -321,16 +336,15 @@ let lineStartBeat = [], totalBeats = 0, abc = "", startMap = new Map();
 function noteAt(pos) { for (const k of [0, 1, 2, 3, -1, 4, 5]) { const n = startMap.get(pos + k); if (n) return n; } return null; }
 
 function abcPitch(n, barState) {
-  // alteration wanted: -1 flat, 0 natural (spelled in E-flat; the renderer transposes for display)
-  const want = n.acc === "b" ? -1 : 0;
-  const o = n.shown, key = n.letter + o;
-  const cur = key in barState ? barState[key] : (KEY_FLATS.has(n.letter) ? -1 : 0);
+  // written letter/octave/alteration in the arrangement's key; accidentals carry through the bar
+  const want = n.wa, o = n.wo, key = n.wl + o;
+  const cur = key in barState ? barState[key] : (ARR.sig[n.wl] || 0);
   let pre = "";
-  if (cur !== want) { pre = want === -1 ? "_" : "="; barState[key] = want; }
-  const p = o >= 5 ? n.letter.toLowerCase() + "'".repeat(o - 5) : n.letter + ",".repeat(4 - o);
+  if (cur !== want) { pre = want === -1 ? "_" : want === 1 ? "^" : "="; barState[key] = want; }
+  const p = o >= 5 ? n.wl.toLowerCase() + "'".repeat(o - 5) : n.wl + ",".repeat(4 - o);
   return pre + p;
 }
-function abcLen(d) { return d === 1 ? "" : d === 2 ? "2" : d === 0.5 ? "/2" : d === 1.5 ? "3/2" : String(d); }
+function abcLen(d) { return d === 1 ? "" : Number.isInteger(d) ? String(d) : Number.isInteger(d * 2) ? `${d * 2}/2` : `${d * 4}/4`; }
 
 // ---------- Chords, in E-flat, at the soprano note where each one starts ----------
 const CHORDS = [[0,"Eb"],[1,"Bb"],[2,"Eb"],[3,"Cm"],[4,"Bb"],[5,"Eb"],[11,"Ab"],[12,"Eb"],[13,"Bb"],
@@ -346,7 +360,19 @@ const SPELL = {
   sharp: ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"],
   shape: ["C", "C♯", "D", "E♭", "E", "F", "F♯", "G", "G♯", "A", "B♭", "B"]
 };
-let chordMode = "piano";   // off | piano | guitar
+// Simple: the main chord of each phrase step, without passing chords or inversions
+const CHORDS_SIMPLE = [[0,"Eb"],[4,"Bb"],[5,"Eb"],[11,"Ab"],[12,"Eb"],[13,"Bb"],
+  [15,"Eb"],[19,"Bb"],[20,"Eb"],[22,"Bb"],[23,"Eb"],[24,"Ab"],[26,"Bb"],[28,"Eb"],
+  [30,"Eb"],[33,"Cm"],[34,"G"],[35,"Cm"],[37,"Gm"],[40,"F"],[41,"Bb"],[42,"Eb"],[45,"F"],[47,"Bb"],
+  [49,"Eb"],[52,"Cm"],[53,"G"],[54,"Cm"],[56,"Gm"],[59,"F"],[60,"Bb"],[61,"Eb"],[64,"F"],[66,"Bb"],
+  [68,"Eb"],[71,"Cm"],[73,"G"],[75,"Bb"],[77,"Ab"],[81,"Eb"],[83,"Ab"],[85,"Eb"],
+  [86,"Eb"],[89,"Ab"],[90,"Eb"],[91,"Fm"],[93,"Cm"],[95,"Bb"],[96,"Eb"],[97,"Ab"],[99,"Bb"],[101,"Eb"],
+  [103,"Eb"],[104,"Cm"],[105,"Bb"],[107,"Ab"],[108,"Eb"],[109,"Fm"],[111,"Cm"],[113,"Bb"],[114,"Eb"],[115,"Ab"],[117,"Bb"],[119,"Eb"]];
+let chordDetail = "full";  // off | simple | full
+let guitarChart = false;
+// On phones, long phrases are split at these beats (every voice has a note starting there)
+const NARROW_SPLITS = new Set([43, 61, 81, 97, 115]);
+let narrowBuild = false;
 function chordInfo() {
   // returns {shift, spell, capo}: how chord names are shown for this choir and instrument
   return { shift: ARR.trans, spell: ARR.sharps ? "sharp" : "flat" };
@@ -358,9 +384,18 @@ function chordName(name) {
   const m = main.match(/^([A-G][b#]?)(.*)$/);
   return t(m[1]) + m[2] + (bass ? "/" + t(bass) : "");
 }
-const chordAt = new Map(CHORDS.map(([b, n]) => [b, n]));
+// Guitar shape to play with capo on fret 3 for a chord written in E-flat (e.g. Eb -> C, Bb -> G)
+function capoShape(name) {
+  const [m, b] = name.split("/"), x = m.match(/^([A-G]b?)(.*)$/);
+  const t = r => SPELL.shape[(PC[r] - 3 + 12) % 12];
+  return t(x[1]) + x[2] + (b ? "/" + t(b) : "");
+}
+const twoRows = () => guitarChart && ARR.trans === 0;
+const chordList = () => chordDetail === "simple" ? CHORDS_SIMPLE : CHORDS;
+let chordAt = new Map(CHORDS.map(([b, n]) => [b, n]));
 
 function build(key) {
+  chordAt = new Map(chordList().map(([b, n]) => [b, n]));
   arrKey = key; ARR = ARRS[key]; PART_NAMES = ARR.voices.map(x => x.name);
   notes = []; lineStartBeat = []; totalBeats = 0; startMap = new Map();
   LINES.forEach((ln, li) => {
@@ -377,30 +412,56 @@ function build(key) {
         const [, letter, acc, o, d, f] = m;
         const dur = d ? parseFloat(d) : 1, oct = +o + vd.oct;
         const midi = 12 * (oct + 1) + BASE[letter] + (acc === "b" ? -1 : 0) + ARR.trans;
-        const shown = oct + (vd.clef === "treble-8" ? 1 : 0);
-        notes.push({ v, line: li, bar, midi, beat, dur, ferm: !!f, letter, oct, shown, acc: acc || "", syl: sylls[si++] || "", els: [] });
+        const shown = oct + (vd.clef === "treble-8" ? 1 : 0);          // tenor clef is written an octave up
+        const LET = "CDEFGAB", idx = LET.indexOf(letter) + ARR.steps;
+        const wl = LET[idx % 7], wo = shown + Math.floor(idx / 7);
+        const wa = midi + 12 * (shown - oct) - (12 * (wo + 1) + BASE[wl]);   // -1 flat, 0 natural, +1 sharp
+        notes.push({ v, line: li, bar, midi, beat, dur, ferm: !!f, letter, oct, shown, wl, wo, wa, acc: acc || "", syl: sylls[si++] || "", els: [] });
         beat += dur;
       });
       lineLen = Math.max(lineLen, beat - totalBeats);
     });
     totalBeats += lineLen;
   });
-  abc = `X:1\nM:none\nL:1/4\n%%score ${ARR.score}\n` +
-    ARR.voices.map((vd, v) => `V:V${v} clef=${vd.clef}${vd.stem === "auto" ? "" : " stem=" + vd.stem}\n`).join("") + "K:Eb\n";
+  const showChords = chordDetail !== "off";
+  abc = `X:1\nM:none\nL:1/4\n%%score ${showChords ? "VC " : ""}${ARR.score}\n` +
+    (showChords ? "V:VC clef=none stafflines=0\n" : "") +
+    ARR.voices.map((vd, v) => `V:V${v} clef=${vd.clef}${vd.stem === "auto" ? "" : " stem=" + vd.stem}\n`).join("") + `K:${ARR.key}\n` + "%%gchordfont Helvetica 13\n";
+  const ascii = t => t.replace(/♭/g, "b").replace(/♯/g, "#");
   LINES.forEach((ln, li) => {
+    if (showChords) {
+      // invisible spacer rests that carry the chord symbols; same bars and phone splits as the voices
+      const start = lineStartBeat[li], end = li + 1 < LINES.length ? lineStartBeat[li + 1] : totalBeats;
+      const s0 = notes.filter(n => n.line === li && n.v === 0);
+      const barAt = new Set(s0.filter((n, i) => i > 0 && n.bar !== s0[i - 1].bar).map(n => n.beat));
+      const cuts = new Set([start, end, ...barAt, ...[...chordAt.keys()].filter(b => b > start && b < end)]);
+      if (narrowBuild) NARROW_SPLITS.forEach(b => { if (b > start && b < end) cuts.add(b); });
+      const pts = [...cuts].sort((a, b) => a - b);
+      abc += "[V:VC] ";
+      if (li === 0 && twoRows()) abc += `"^Capo 3""^ "x2 `;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const b = pts[i];
+        if (i > 0) abc += barAt.has(b) ? "| " : (narrowBuild && NARROW_SPLITS.has(b)) ? "[|] " : "";
+        const c = chordAt.get(b);
+        if (c) abc += twoRows() ? `"^${ascii(capoShape(c))}""^${ascii(chordName(c))}"` : `"^${ascii(chordName(c))}"`;   // guitar row above piano row
+        abc += "x" + abcLen(pts[i + 1] - b) + " ";
+      }
+      abc += li === LINES.length - 1 ? "|]\n" : "|\n";
+    }
     ARR.voices.forEach((vd, v) => {
       abc += `[V:V${v}] `;
+      if (li === 0 && showChords && twoRows()) abc += "x2 ";
       const ns = notes.filter(n => n.line === li && n.v === v);
       let barState = {}, curBar = 0, prevEighth = false, dynI = 0;
       ns.forEach((n, i) => {
         if (n.bar !== curBar) { abc += "| "; barState = {}; curBar = n.bar; prevEighth = false; }
+        else if (narrowBuild && i > 0 && NARROW_SPLITS.has(n.beat)) { abc += " [|] "; barState = {}; prevEighth = false; }
         let deco = "";
         if (v === 0 && ((i === 0) || (n.bar !== ns[i - 1].bar)) && ln.dyn[dynI]) deco += `!${ln.dyn[dynI++]}!`;
         if (n.ferm) deco += "!fermata!";
         const eighth = n.dur === 0.5;
         if (!(eighth && prevEighth)) abc += " ";
         startMap.set(abc.length, n);   // abcjs may count a note from its annotations or decorations
-        if (v === 0 && chordMode !== "off" && chordAt.has(n.beat)) { abc += `"^${chordName(chordAt.get(n.beat))}"`; startMap.set(abc.length, n); }
         abc += deco;
         startMap.set(abc.length, n);
         abc += abcPitch(n, barState) + abcLen(n.dur);
@@ -552,7 +613,8 @@ function play(fromBeat) {
     if (lead && lead.els[0] && lead !== lastScroll) {
       lastScroll = lead;
       const r = lead.els[0].getBoundingClientRect();
-      if (r.top < 60 || r.bottom > window.innerHeight - (settingsEl.hidden ? 120 : 220)) lead.els[0].scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      const box = document.getElementById("scroller").getBoundingClientRect();
+      if (r.top < box.top + 40 || r.bottom > box.bottom - 30) lead.els[0].scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     }
     raf = requestAnimationFrame(tick);
   };
@@ -665,9 +727,15 @@ function render() {
   const want = narrow ? "narrow" : "wide";
   if (want === layout) return;
   layout = want;
+  if (narrowBuild !== narrow) {
+    const cue = cueNote ? { v: cueNote.v, beat: cueNote.beat } : null;
+    if (playing) stop();
+    narrowBuild = narrow; build(arrKey);
+    cueNote = cue ? notes.find(n => n.v === cue.v && n.beat === cue.beat) || null : null;
+  }
   notes.forEach(n => n.els = []);
   const opts = {
-    add_classes: true, responsive: "resize", visualTranspose: ARR.trans, paddingleft: 4, paddingright: 4,
+    add_classes: true, responsive: "resize", paddingleft: 4, paddingright: 4,
     clickListener: (el) => {
       const n = noteAt(el.startChar); if (!n) return;
       ensureAudio();
@@ -687,6 +755,15 @@ function render() {
     const n = noteAt(el.startChar);
     if (n && el.abselem) n.els = el.abselem.elemset.slice();
   }))));
+  if (chordDetail !== "off") {
+    document.querySelectorAll("#score .abcjs-staff-wrapper").forEach(w => {
+      [w.querySelector(".abcjs-staff"), w.querySelector(".abcjs-key-signature")].forEach(e => e && e.setAttribute("visibility", "hidden"));
+    });
+    tune.lines.forEach(line => {
+      const st = line.staff && line.staff[0];
+      if (st) st.voices[0].forEach(el => { if (el.el_type === "bar" && el.abselem) el.abselem.elemset.forEach(e => e.setAttribute("visibility", "hidden")); });
+    });
+  }
   paintMine();
   if (cueNote) cueNote.els.forEach(e => e.classList.add("cue"));
 }
@@ -713,17 +790,19 @@ function setArrangement(key) {
 document.querySelectorAll("[data-arr]").forEach(b => b.addEventListener("click", () => setArrangement(b.dataset.arr)));
 function chordNote() {
   const el = document.getElementById("chord-note");
-  if (chordMode === "off") { el.textContent = ""; return; }
-  el.textContent = `Chords in ${ARR.trans ? "G" : "E♭"} major, as sung${chordMode === "guitar" ? "; fingerings are above the score" : ""}.`;
   drawDiagrams();
+  if (chordDetail === "off" && !guitarChart) { el.textContent = ""; return; }
+  el.textContent = chordDetail === "off" ? "" : twoRows()
+    ? `Chords: top row guitar (capo 3), bottom row piano (E♭ major)${chordDetail === "simple" ? ", main chords only" : ""}. Guitar chart below the music.`
+    : `Chords in ${ARR.trans ? "G" : "E♭"} major, as sung${chordDetail === "simple" ? " (main chords only)" : ""}${guitarChart ? "; guitar chart below the music" : ""}.`;
 }
 // Guitar fingerings, low E to high e: x = don't play, 0 = open, n = fret
 const SHAPES = {
   "E♭": "xx1343", "B♭": "x13331", "Cm": "x35543", "A♭": "466544", "G": "320003", "Gm": "355333",
-  "F": "133211", "Fm": "133111", "B♭/D": "xx0331",
+  "F": "xx3211", "Fm": "133111", "B♭/D": "xx0331", "E": "022100", "Dm": "xx0231", "G/B": "x20003",
   "D": "xx0232", "Em": "022000", "C": "x32010", "B": "x24442", "Bm": "x24432", "A": "x02220", "Am": "x02210", "D/F♯": "2x0232"
 };
-function diagramSVG(name) {
+function diagramSVG(name, caption) {
   const f = SHAPES[name]; if (!f) return "";
   const frets = [...f].map(c => c === "x" ? -1 : +c), played = frets.filter(n => n > 0);
   const lo = Math.min(...played), hi = Math.max(...played);
@@ -738,13 +817,22 @@ function diagramSVG(name) {
     else if (n === 0) g += `<circle cx="${X(i)}" cy="${Y(0) - 6}" r="2.6" class="open"/>`;
     else g += `<circle cx="${X(i)}" cy="${Y(n - base) + 6}" r="3.6" class="dot"/>`;
   });
-  return `<figure class="diagram"><svg viewBox="0 0 74 74" width="74" height="74" role="img" aria-label="${name} guitar chord">${g}</svg></figure>`;
+  if (caption) g += `<text x="35" y="82" text-anchor="middle" class="dcap">${caption}</text>`;
+  const h = caption ? 86 : 74;
+  return `<figure class="diagram"><svg viewBox="0 0 74 ${h}" width="74" height="${h}" role="img" aria-label="${name} guitar chord${caption ? ", " + caption : ""}">${g}</svg></figure>`;
 }
 function drawDiagrams() {
   const box = document.getElementById("diagrams");
-  if (chordMode !== "guitar") { box.hidden = true; box.innerHTML = ""; return; }
-  const used = [...new Set(CHORDS.map(([, n]) => chordName(n)))];
-  box.innerHTML = used.map(diagramSVG).join("");
+  if (!guitarChart) { box.hidden = true; box.innerHTML = ""; return; }
+  const list = chordDetail === "simple" ? CHORDS_SIMPLE : CHORDS;
+  const concert = [...new Set(list.map(([, n]) => n))];   // E-flat names
+  if (ARR.trans === 0) {
+    // Mixed version in E-flat: capo on fret 3, play C-family shapes
+    box.innerHTML = `<p class="capo"><b>Guitar chart · capo on fret 3.</b> Play the shape; it sounds the piano chord shown under it.</p>` +
+      concert.map(n => diagramSVG(capoShape(n), "= " + chordName(n))).join("");
+  } else {
+    box.innerHTML = `<p class="capo"><b>Guitar chart · no capo.</b> Open chords in G, the same as the piano.</p>` + concert.map(n => diagramSVG(chordName(n))).join("");
+  }
   box.hidden = false;
 }
 function rerenderChords() {
@@ -754,9 +842,19 @@ function rerenderChords() {
   if (cue) setStartAt(notes.find(n => n.v === cue.v && n.beat === cue.beat) || null);
   chordNote();
 }
-document.querySelectorAll("[data-ch]").forEach(b => b.addEventListener("click", () => {
-  chordMode = b.dataset.ch;
-  document.querySelectorAll("[data-ch]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+let lastDetail = "full";
+function setChordDetail(d) {
+  chordDetail = d;
+  if (d !== "off") lastDetail = d;
+  document.querySelectorAll("[data-ch]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.ch === d)));
+  document.getElementById("chords-btn").setAttribute("aria-pressed", String(d !== "off"));
+  rerenderChords();
+}
+document.querySelectorAll("[data-ch]").forEach(b => b.addEventListener("click", () => setChordDetail(b.dataset.ch)));
+document.getElementById("chords-btn").addEventListener("click", () => setChordDetail(chordDetail === "off" ? lastDetail : "off"));
+document.querySelectorAll("[data-gt]").forEach(b => b.addEventListener("click", () => {
+  guitarChart = b.dataset.gt === "on";
+  document.querySelectorAll("[data-gt]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
   rerenderChords();
 }));
 fillParts();
