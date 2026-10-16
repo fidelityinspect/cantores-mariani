@@ -66,6 +66,29 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
 .how b { display: block; font-family: var(--display); font-weight: 500; color: var(--navy); font-size: 17px; letter-spacing: .04em; margin-bottom: 2px; }
 .how span { color: var(--muted); font-size: 17px; }
 
+.vision { text-align: center; display: grid; gap: 14px; justify-items: center; padding: 6px 0; }
+.vision .v { font-family: var(--body); font-style: italic; font-size: clamp(21px, 3.6vw, 26px); line-height: 1.45; color: var(--fg); margin: 0; max-width: 34ch; text-wrap: balance; }
+.vision .three { font-family: var(--display); letter-spacing: .22em; font-size: 14px; color: var(--navy); margin: 0; text-transform: uppercase; }
+.vision .three span { color: var(--gold); padding: 0 .4em; }
+.vision .m { margin: 0; max-width: 52ch; color: var(--muted); font-size: 17px; }
+.vision .m b { color: var(--fg); font-weight: 500; }
+
+.coming { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.day { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; display: grid; grid-template-columns: 64px 1fr; gap: 2px 16px; }
+.day.empty { display: block; color: var(--muted); font-style: italic; }
+.date { grid-row: span 3; text-align: center; font-family: var(--ui); color: var(--navy); line-height: 1.1; }
+.date .mo { display: block; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.date .dd { display: block; font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.date .dw { display: block; font-size: 12px; color: var(--muted); }
+.day h3 { font-family: var(--body); font-weight: 500; font-size: 20px; margin: 0; line-height: 1.25; }
+.day .gospel { margin: 0; color: var(--muted); font-size: 16px; font-style: italic; }
+.music { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 3px; }
+.music li { font-size: 17px; }
+.music .part { font-family: var(--ui); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); display: inline-block; min-width: 92px; }
+.music a { color: var(--navy); }
+.music .num { color: var(--muted); font-size: 15px; }
+.tbp { margin: 6px 0 0; font-family: var(--ui); font-size: 13px; color: var(--muted); }
+
 footer { border-top: 1px solid var(--rule); padding-top: 18px; text-align: center; display: grid; gap: 4px; }
 footer .am { font-family: var(--display); letter-spacing: .3em; color: var(--gold); font-size: 13px; }
 footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
@@ -85,6 +108,17 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
     <p class="motto">MVSICA SACRA ET POLYPHONIA</p>
     <p class="lede">Singers of Mary. Sacred music and polyphony.</p>
   </header>
+
+  <section class="vision" aria-label="Vision and mission">
+    <p class="v">From sea to shining sea, the Latin Church is clothed in the splendor of sacred chant and heavenly polyphony, the most fitting setting in which to honor our Mother as she points us to her Son.</p>
+    <p class="three">Beautiful <span>·</span> Purposeful <span>·</span> Fun</p>
+    <p class="m"><b>Our mission:</b> sustainable, generational, beautiful sacred music that elevates the Mass and gives each member the opportunity to offer God their highest and best.</p>
+  </section>
+
+  <section aria-labelledby="coming-h">
+    <h2 id="coming-h">Coming up</h2>
+    <ol class="coming" id="coming"><li class="day empty">The next two weeks of music will appear here.</li></ol>
+  </section>
 
   <section aria-labelledby="practice-h">
     <h2 id="practice-h">Practice</h2>
@@ -113,5 +147,27 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
     <span class="tr">Under the protection of Mary</span>
   </footer>
 </div>
+
+<script>
+// Rolling two-week plan: shows days from today through the next 14 days (Austin time).
+(async () => {
+  const box = document.getElementById("coming");
+  let plan;
+  try { plan = await (await fetch("plan.json", { cache: "no-store" })).json(); } catch (e) { return; }
+  const today = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })); today.setHours(0, 0, 0, 0);
+  const until = new Date(today); until.setDate(until.getDate() + 14);
+  const days = plan.days.filter(d => { const t = new Date(d.date + "T00:00:00"); return t >= today && t <= until; });
+  if (!days.length) { box.innerHTML = '<li class="day empty">Music for the next two weeks will be posted soon.</li>'; return; }
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  box.innerHTML = days.map(d => {
+    const t = new Date(d.date + "T00:00:00");
+    const mo = t.toLocaleString("en-US", { month: "short" }), dw = t.toLocaleString("en-US", { weekday: "short" });
+    const music = d.music && d.music.length
+      ? '<ul class="music">' + d.music.map(m => `<li><span class="part">${esc(m.part)}</span> ${m.practice ? `<a href="${esc(m.practice)}">${esc(m.title)}</a>` : esc(m.title)}${m.hymnal ? ` <span class="num">${esc(m.hymnal)}</span>` : ""}</li>`).join("") + "</ul>"
+      : '<p class="tbp">Hymns and Mass parts to be posted.</p>';
+    return `<li class="day"><div class="date"><span class="mo">${mo}</span><span class="dd">${t.getDate()}</span><span class="dw">${dw}</span></div><h3>${esc(d.title)}</h3><p class="gospel">${esc(d.gospel || "")}</p>${music}</li>`;
+  }).join("");
+})();
+</script>
 </body>
 </html>

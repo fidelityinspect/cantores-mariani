@@ -1,0 +1,9 @@
+{
+  "note": "Rolling two-week plan for the Cantores Mariani home page. One entry per Sunday or feast. Fill music with {\"part\": \"Entrance\", \"title\": \"...\", \"hymnal\": \"St. Michael 4th ed. #\", \"practice\": \"ave-maria/\"}; leave music empty to show 'to be posted'.",
+  "days": [
+    { "date": "2026-10-18", "title": "Twenty-Ninth Sunday in Ordinary Time", "gospel": "Matthew 22:15–21 · Repay to Caesar what belongs to Caesar", "music": [] },
+    { "date": "2026-10-25", "title": "Thirtieth Sunday in Ordinary Time", "gospel": "Matthew 22:34–40 · The greatest commandment", "music": [] },
+    { "date": "2026-11-01", "title": "All Saints", "gospel": "Matthew 5:1–12a · The Beatitudes", "music": [] },
+    { "date": "2026-11-08", "title": "Thirty-Second Sunday in Ordinary Time", "gospel": "Matthew 25:1–13 · The wise and foolish virgins", "music": [] }
+  ]
+}
