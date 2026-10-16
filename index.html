@@ -231,8 +231,8 @@ footer a { color: var(--navy); }
       <div class="group" aria-label="Chords">
         <span class="label">Chords</span>
         <button class="chip" id="ch-off" data-ch="off" aria-pressed="false">Off</button>
-        <button class="chip" id="ch-simple" data-ch="simple" aria-pressed="false">Simple</button>
-        <button class="chip" id="ch-full" data-ch="full" aria-pressed="true">Full</button>
+        <button class="chip" id="ch-simple" data-ch="simple" aria-pressed="true">Simple</button>
+        <button class="chip" id="ch-full" data-ch="full" aria-pressed="false">Full</button>
       </div>
       <div class="group" aria-label="Guitar chart">
         <span class="label">Guitar chart</span>
@@ -371,7 +371,7 @@ const CHORDS_SIMPLE = [[0,"Eb"],[4,"Bb"],[5,"Eb"],[11,"Ab"],[12,"Eb"],[13,"Bb"],
   [68,"Eb"],[71,"Cm"],[73,"G"],[75,"Bb"],[77,"Ab"],[81,"Eb"],[83,"Ab"],[85,"Eb"],
   [86,"Eb"],[89,"Ab"],[90,"Eb"],[91,"Fm"],[93,"Cm"],[95,"Bb"],[96,"Eb"],[97,"Ab"],[99,"Bb"],[101,"Eb"],
   [103,"Eb"],[104,"Cm"],[105,"Bb"],[107,"Ab"],[108,"Eb"],[109,"Fm"],[111,"Cm"],[113,"Bb"],[114,"Eb"],[115,"Ab"],[117,"Bb"],[119,"Eb"]];
-let chordDetail = "full";  // off | simple | full
+let chordDetail = "simple";  // off | simple | full (Simple is the default)
 let guitarChart = false;
 // On phones, long phrases are split at these beats (every voice has a note starting there)
 const NARROW_SPLITS = new Set([43, 61, 81, 97, 115]);
@@ -820,7 +820,7 @@ function rerenderChords() {
   if (cue) setStartAt(notes.find(n => n.v === cue.v && n.beat === cue.beat) || null);
   chordNote();
 }
-let lastDetail = "full";
+let lastDetail = "simple";
 function setChordDetail(d) {
   chordDetail = d;
   if (d !== "off") lastDetail = d;
