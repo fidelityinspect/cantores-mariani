@@ -153,6 +153,9 @@ button { font: inherit; cursor: pointer; }
 /* YouTube practice tracks */
 .tracks { display: grid; gap: 10px; }
 .tracks h3 { font-family: var(--display); font-size: 13px; letter-spacing: .2em; color: var(--gold); margin: 0; font-weight: 500; text-transform: uppercase; }
+.tracks-lbl { margin: 10px 0 8px; font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--fg); }
+.tracks-lbl span { font-weight: 400; color: var(--muted); }
+#tracks-ttb .tracks-lbl:first-child { margin-top: 0; }
 .tracks-note { margin: 0; color: var(--muted); font-family: var(--ui); font-size: 13px; }
 .track-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .track-row a {
@@ -197,12 +200,27 @@ footer a { color: var(--navy); }
 
 
   <section class="tracks" aria-labelledby="tracks-title">
-    <h3 id="tracks-title">Hear your part sung</h3>
+    <h3 id="tracks-title">Hear it sung</h3>
+    <div id="tracks-ttb">
+      <p class="tracks-lbl">Men's choirs singing it <span>(John Leavitt's TTBB edition, so a few harmonies differ)</span></p>
+      <div class="track-row">
+        <a href="https://www.youtube.com/watch?v=6rusv3zVg3Y" target="_blank" rel="noopener">CHS Men's Chorus</a>
+        <a href="https://www.youtube.com/watch?v=UTaCA9d1F_8" target="_blank" rel="noopener">M. S. Williams, men's choir</a>
+      </div>
+      <p class="tracks-lbl">Your line, sung <span>(these are mixed-choir tracks of the same lines, higher and in another key, so learn the shape here and take your notes from the score above)</span></p>
+      <div class="track-row">
+        <a href="https://www.youtube.com/watch?v=IJQYZl2zm_8" target="_blank" rel="noopener">Tenor I</a>
+        <a href="https://www.youtube.com/watch?v=o8jm8BQ5Yeg" target="_blank" rel="noopener">Tenor II</a>
+        <a href="https://www.youtube.com/watch?v=OnDTUkSkAa0" target="_blank" rel="noopener">Bass</a>
+      </div>
+    </div>
+    <div id="tracks-satb" hidden>
     <div class="track-row">
       <a href="https://www.youtube.com/watch?v=IJQYZl2zm_8" target="_blank" rel="noopener">Soprano</a>
       <a href="https://www.youtube.com/watch?v=o8jm8BQ5Yeg" target="_blank" rel="noopener">Alto</a>
       <a href="https://www.youtube.com/watch?v=OnDTUkSkAa0" target="_blank" rel="noopener">Tenor</a>
       <a href="https://www.youtube.com/watch?v=O-j2xUlQTfU" target="_blank" rel="noopener">Bass</a>
+    </div>
     </div>
     <p class="tracks-note">Opens on YouTube.</p>
   </section>
@@ -791,6 +809,8 @@ function setArrangement(key) {
   part = -1; fillParts(); syncVolumeLabels(); applyMix();
   if (ctx) voiceIn = voiceGain.map((g, v) => vowel(v, g));
   document.getElementById("arr-label").textContent = ARR.label;
+  document.getElementById("tracks-ttb").hidden = key !== "ttb";
+  document.getElementById("tracks-satb").hidden = key !== "satb";
   document.querySelectorAll("[data-arr]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.arr === key)));
   layout = ""; render();
   chooseSection(sec); chordNote();
