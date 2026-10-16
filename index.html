@@ -18,6 +18,7 @@
 :root {
   --bg: #eef0f4; --surface: #ffffff; --fg: #1a2440; --muted: #56607a; --rule: #d5d9e3;
   --navy: #1d3461; --gold: #a87d2c; --gold-soft: #c9a24a; --gold-ink: #1a1406;
+  --band: #1d3461; --band-ink: #f4efe1; --band-gold: #d6b25e;
   --display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
   --body: "EB Garamond", "Garamond", Georgia, serif;
   --ui: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
@@ -34,11 +35,20 @@ body {
 }
 .wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 44px; }
 
-header { display: grid; justify-items: center; text-align: center; gap: 12px; }
-header img { width: min(240px, 60vw); height: auto; }
-h1 { font-family: var(--display); font-weight: 700; letter-spacing: .12em; font-size: clamp(32px, 7vw, 50px); line-height: 1.1; margin: 6px 0 0; color: var(--navy); text-wrap: balance; }
-.motto { font-family: var(--display); font-weight: 500; letter-spacing: .28em; font-size: 14px; color: var(--gold); margin: 0; }
-.lede { margin: 6px 0 0; max-width: 36ch; color: var(--muted); font-style: italic; }
+.band {
+  background: var(--band); color: var(--band-ink); border-radius: 18px; padding: 28px 32px;
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 28px;
+  box-shadow: 0 18px 40px -28px rgba(10,20,50,.6);
+}
+.band img { width: 168px; height: auto; display: block; }
+.titles { display: grid; gap: 8px; min-width: 0; }
+h1 { font-family: var(--display); font-weight: 700; letter-spacing: .1em; font-size: clamp(30px, 5.4vw, 46px); line-height: 1.05; margin: 0; color: var(--band-ink); text-wrap: balance; }
+.motto { font-family: var(--display); font-weight: 500; letter-spacing: .26em; font-size: 14px; color: var(--band-gold); margin: 0; }
+.tr { margin: 2px 0 0; font-style: italic; font-size: 17px; color: rgba(244,239,225,.78); }
+@media (max-width: 600px) {
+  .band { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 26px 20px; gap: 16px; }
+  .band img { width: 150px; }
+}
 
 h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spacing: .24em; color: var(--gold); margin: 0 0 14px; text-transform: uppercase; }
 
@@ -66,12 +76,16 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
 .how b { display: block; font-family: var(--display); font-weight: 500; color: var(--navy); font-size: 17px; letter-spacing: .04em; margin-bottom: 2px; }
 .how span { color: var(--muted); font-size: 17px; }
 
-.vision { text-align: center; display: grid; gap: 14px; justify-items: center; padding: 6px 0; }
-.vision .v { font-family: var(--body); font-style: italic; font-size: clamp(21px, 3.6vw, 26px); line-height: 1.45; color: var(--fg); margin: 0; max-width: 34ch; text-wrap: balance; }
-.vision .three { font-family: var(--display); letter-spacing: .22em; font-size: 14px; color: var(--navy); margin: 0; text-transform: uppercase; }
-.vision .three span { color: var(--gold); padding: 0 .4em; }
-.vision .m { margin: 0; max-width: 52ch; color: var(--muted); font-size: 17px; }
-.vision .m b { color: var(--fg); font-weight: 500; }
+.vision { text-align: center; border-top: 1px solid var(--gold-soft); border-bottom: 1px solid var(--gold-soft); padding: 26px 8px 30px; }
+.vision h2 { margin-bottom: 12px; }
+.vision .v { font-family: var(--body); font-style: italic; font-size: clamp(21px, 3.4vw, 27px); line-height: 1.45; color: var(--fg); margin: 0 auto; max-width: 32ch; text-wrap: balance; }
+
+.mission { display: grid; gap: 12px; }
+.three { list-style: none; margin: 0 0 10px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.three li { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 8px; text-align: center;
+  font-family: var(--display); font-weight: 500; letter-spacing: .14em; text-transform: uppercase; font-size: 14px; color: var(--navy); }
+.mission h2 { margin: 0; }
+.mission p { margin: 0; font-size: 19px; max-width: 60ch; }
 
 .coming { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .day { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; display: grid; grid-template-columns: 64px 1fr; gap: 2px 16px; }
@@ -108,17 +122,26 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
 </head>
 <body>
 <div class="wrap">
-  <header>
+  <header class="band">
     <img src="seal.png" alt="Seal of Cantores Mariani: an A and M monogram ringed by twelve stars" width="480" height="480">
-    <h1>Cantores Mariani</h1>
-    <p class="motto">MVSICA SACRA ET POLYPHONIA</p>
-    <p class="lede">Singers of Mary. Sacred music and polyphony.</p>
+    <div class="titles">
+      <h1>Cantores Mariani</h1>
+      <p class="motto">MVSICA SACRA ET POLYPHONIA</p>
+      <p class="tr">Singers of Mary · Sacred Music and Polyphony</p>
+    </div>
   </header>
 
-  <section class="vision" aria-label="Vision and mission">
+  <section class="vision" aria-labelledby="vision-h">
+    <h2 id="vision-h">Our vision</h2>
     <p class="v">From sea to shining sea, the Latin Church is clothed in the splendor of sacred chant and heavenly polyphony, the most fitting setting in which to honor our Mother as she points us to her Son.</p>
-    <p class="three">Beautiful <span>·</span> Purposeful <span>·</span> Fun</p>
-    <p class="m"><b>Our mission:</b> sustainable, generational, beautiful sacred music that elevates the Mass and gives each member the opportunity to offer God their highest and best.</p>
+  </section>
+
+  <section class="mission" aria-labelledby="mission-h">
+    <ul class="three" aria-label="Three first things">
+      <li>Beautiful</li><li>Purposeful</li><li>Fun</li>
+    </ul>
+    <h2 id="mission-h">Our mission</h2>
+    <p>Sustainable, generational, beautiful sacred music that elevates the Mass and gives each member the opportunity to offer God their highest and best.</p>
   </section>
 
   <section aria-labelledby="coming-h">
