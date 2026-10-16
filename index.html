@@ -106,7 +106,7 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
 .watch .cap b { color: var(--fg); font-weight: 500; }
 .watch .cap a { color: var(--navy); }
 
-footer { border-top: 1px solid var(--rule); padding-top: 18px; text-align: center; display: grid; gap: 4px; }
+footer { padding-top: 6px; text-align: center; display: grid; gap: 4px; }
 footer .am { font-family: var(--display); letter-spacing: .3em; color: var(--gold); font-size: 13px; }
 footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
 
@@ -128,14 +128,9 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
     </div>
   </header>
 
-  <section class="statements" aria-label="Vision and mission">
+  <section class="statements" aria-labelledby="mission-h">
     <div class="stmt">
-      <h2>Our vision</h2>
-      <p>From sea to shining sea, the Latin Church is clothed in the splendor of sacred chant and heavenly polyphony, the most fitting setting in which to honor our Mother as she points us to her Son.</p>
-    </div>
-    <span class="divider" aria-hidden="true"></span>
-    <div class="stmt">
-      <h2>Our mission</h2>
+      <h2 id="mission-h">Our mission</h2>
       <p>We exist to promote a culture of beauty and reverence in the Mass through the formation of vocalists and cantors who elevate sacred chant and polyphony to pride of place.</p>
       <p class="cite">cf. <a href="https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_en.html" target="_blank" rel="noopener"><i>Sacrosanctum Concilium</i> 116</a></p>
     </div>
@@ -174,6 +169,13 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
       <iframe src="https://www.youtube-nocookie.com/embed/GZp32F8exFc" title="Sacred Art as the Only Hope for Reviving Culture, Jonathan Pageau" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
     </div>
     <p class="cap"><b>Sacred Art as the Only Hope for Reviving Culture</b> · Jonathan Pageau, Shared Inheritance conference, May 2019. <a href="https://www.youtube.com/watch?v=GZp32F8exFc" target="_blank" rel="noopener">Watch on YouTube ↗</a></p>
+  </section>
+
+  <section class="statements" aria-labelledby="vision-h">
+    <div class="stmt">
+      <h2 id="vision-h">Our vision</h2>
+      <p>From sea to shining sea, the Latin Church is clothed in the splendor of sacred chant and heavenly polyphony, the most fitting setting in which to honor our Mother as she points us to her Son.</p>
+    </div>
   </section>
 
   <footer>
