@@ -76,18 +76,13 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
 .how b { display: block; font-family: var(--display); font-weight: 500; color: var(--navy); font-size: 17px; letter-spacing: .04em; margin-bottom: 2px; }
 .how span { color: var(--muted); font-size: 17px; }
 
-.vision { text-align: center; border-top: 1px solid var(--gold-soft); border-bottom: 1px solid var(--gold-soft); padding: 26px 8px 30px; }
-.vision h2 { margin-bottom: 12px; }
-.vision .v { font-family: var(--body); font-style: italic; font-size: clamp(21px, 3.4vw, 27px); line-height: 1.45; color: var(--fg); margin: 0 auto; max-width: 32ch; text-wrap: balance; }
-
-.mission { display: grid; gap: 12px; }
-.three { list-style: none; margin: 0 0 10px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.three li { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 8px; text-align: center;
-  font-family: var(--display); font-weight: 500; letter-spacing: .14em; text-transform: uppercase; font-size: 14px; color: var(--navy); }
-.mission h2 { margin: 0; }
-.mission p { margin: 0; font-size: 19px; max-width: 60ch; }
-.mission .cite { font-size: 15px; color: var(--muted); font-style: italic; }
-.mission .cite a { color: var(--muted); text-underline-offset: 3px; }
+.statements { border-top: 1px solid var(--gold-soft); border-bottom: 1px solid var(--gold-soft); padding: 30px 8px 32px; display: grid; gap: 26px; justify-items: center; text-align: center; }
+.stmt { display: grid; gap: 12px; justify-items: center; }
+.stmt h2 { margin: 0; }
+.stmt p { font-family: var(--body); font-style: italic; font-size: clamp(20px, 3.2vw, 25px); line-height: 1.45; color: var(--fg); margin: 0; max-width: 34ch; text-wrap: balance; }
+.stmt .cite { font-size: 15px; color: var(--muted); }
+.stmt .cite a { color: var(--muted); text-underline-offset: 3px; }
+.divider { width: 64px; height: 1px; background: var(--gold-soft); }
 
 .coming { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .day { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; display: grid; grid-template-columns: 64px 1fr; gap: 2px 16px; }
@@ -133,15 +128,17 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
     </div>
   </header>
 
-  <section class="vision" aria-labelledby="vision-h">
-    <h2 id="vision-h">Our vision</h2>
-    <p class="v">From sea to shining sea, the Latin Church is clothed in the splendor of sacred chant and heavenly polyphony, the most fitting setting in which to honor our Mother as she points us to her Son.</p>
-  </section>
-
-  <section class="mission" aria-labelledby="mission-h">
-    <h2 id="mission-h">Our mission</h2>
-    <p>We exist to promote a culture of beauty and reverence in the Mass through the formation of vocalists and cantors who elevate sacred chant and polyphony to pride of place.</p>
-    <p class="cite">cf. <a href="https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_en.html" target="_blank" rel="noopener"><i>Sacrosanctum Concilium</i> 116</a></p>
+  <section class="statements" aria-label="Vision and mission">
+    <div class="stmt">
+      <h2>Our vision</h2>
+      <p>From sea to shining sea, the Latin Church is clothed in the splendor of sacred chant and heavenly polyphony, the most fitting setting in which to honor our Mother as she points us to her Son.</p>
+    </div>
+    <span class="divider" aria-hidden="true"></span>
+    <div class="stmt">
+      <h2>Our mission</h2>
+      <p>We exist to promote a culture of beauty and reverence in the Mass through the formation of vocalists and cantors who elevate sacred chant and polyphony to pride of place.</p>
+      <p class="cite">cf. <a href="https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_en.html" target="_blank" rel="noopener"><i>Sacrosanctum Concilium</i> 116</a></p>
+    </div>
   </section>
 
   <section aria-labelledby="coming-h">
