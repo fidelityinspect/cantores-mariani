@@ -323,11 +323,11 @@ function noteAt(pos) { for (const k of [0, 1, 2, 3, -1, 4, 5]) { const n = start
 function abcPitch(n, barState) {
   // alteration wanted: -1 flat, 0 natural (spelled in E-flat; the renderer transposes for display)
   const want = n.acc === "b" ? -1 : 0;
-  const key = n.letter + n.oct;
+  const o = n.shown, key = n.letter + o;
   const cur = key in barState ? barState[key] : (KEY_FLATS.has(n.letter) ? -1 : 0);
   let pre = "";
   if (cur !== want) { pre = want === -1 ? "_" : "="; barState[key] = want; }
-  const p = n.oct >= 5 ? n.letter.toLowerCase() + "'".repeat(n.oct - 5) : n.letter + ",".repeat(4 - n.oct);
+  const p = o >= 5 ? n.letter.toLowerCase() + "'".repeat(o - 5) : n.letter + ",".repeat(4 - o);
   return pre + p;
 }
 function abcLen(d) { return d === 1 ? "" : d === 2 ? "2" : d === 0.5 ? "/2" : d === 1.5 ? "3/2" : String(d); }
@@ -377,7 +377,8 @@ function build(key) {
         const [, letter, acc, o, d, f] = m;
         const dur = d ? parseFloat(d) : 1, oct = +o + vd.oct;
         const midi = 12 * (oct + 1) + BASE[letter] + (acc === "b" ? -1 : 0) + ARR.trans;
-        notes.push({ v, line: li, bar, midi, beat, dur, ferm: !!f, letter, oct, acc: acc || "", syl: sylls[si++] || "", els: [] });
+        const shown = oct + (vd.clef === "treble-8" ? 1 : 0);
+        notes.push({ v, line: li, bar, midi, beat, dur, ferm: !!f, letter, oct, shown, acc: acc || "", syl: sylls[si++] || "", els: [] });
         beat += dur;
       });
       lineLen = Math.max(lineLen, beat - totalBeats);
