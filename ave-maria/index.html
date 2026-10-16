@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Practice your part of Arcadelt's Ave Maria, men's TTB or mixed SATB, with piano and guitar chords.">
+<meta property="og:title" content="Cantores Mariani">
+<meta property="og:description" content="Practice your part of Arcadelt's Ave Maria, men's TTB or mixed SATB, with piano and guitar chords.">
+<meta property="og:image" content="seal.png">
+<link rel="icon" type="image/png" href="seal.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Cantores Mariani</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+/* Layout: one centered choir-folder column — seal and name, then the piece as a sheet of paper with a practice bar riding above it. */
+:root {
+  --bg: #eef0f4;          /* cool vellum, biased toward the Marian blue */
+  --surface: #ffffff;
+  --fg: #1a2440;
+  --muted: #56607a;
+  --navy: #1d3461;
+  --gold: #a87d2c;
+  --gold-soft: #c9a24a;
+  --rule: #d5d9e3;
+  --paper: #fdfcf8;       /* the score is always a light sheet */
+  --ink: #1b1f2a;
+  --mine: #1d4fa8;        /* your part */
+  --hl: #c8901c;          /* sounding now */
+  --chip: #e2e6ef;
+  --display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+  --body: "EB Garamond", "Garamond", "Iowan Old Style", Georgia, serif;
+  --ui: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1527; --surface: #16203a; --fg: #e9e6dc; --muted: #a3abbf; --navy: #b9c8ea;
+  --gold: #d6b25e; --gold-soft: #c9a24a; --rule: #28334f; --chip: #222d49; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0e1527; --surface: #16203a; --fg: #e9e6dc; --muted: #a3abbf; --navy: #b9c8ea;
+  --gold: #d6b25e; --gold-soft: #c9a24a; --rule: #28334f; --chip: #222d49; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 19px; line-height: 1.55;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.scroller {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 40px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 40px; }
+
+header { display: grid; justify-items: center; text-align: center; gap: 14px; }
+header img { width: min(220px, 52vw); height: auto; }
+h1 { font-family: var(--display); font-weight: 700; letter-spacing: .12em; font-size: clamp(30px, 6vw, 46px); line-height: 1.1; margin: 6px 0 0; color: var(--navy); text-wrap: balance; }
+.motto { font-family: var(--display); font-weight: 500; letter-spacing: .28em; font-size: 14px; color: var(--gold); margin: 0; }
+
+.piece { display: grid; gap: 18px; }
+.piece-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 24px;
+  border-bottom: 1px solid var(--rule); padding: 10px 0 10px;
+}
+h2 { font-family: var(--display); font-weight: 700; letter-spacing: .06em; font-size: clamp(24px, 4vw, 32px); margin: 0; color: var(--navy); }
+.attrib { margin: 0; color: var(--muted); font-style: italic; }
+.attrib b { font-style: normal; font-weight: 500; color: var(--fg); }
+
+/* practice bar */
+.bar {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+  padding: 12px 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+  font-family: var(--ui); font-size: 14px; box-shadow: 0 6px 18px -14px rgba(10,20,50,.5);
+}
+.group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+button { font: inherit; cursor: pointer; }
+.chip {
+  border: 1px solid transparent; background: var(--chip); color: var(--fg);
+  padding: 7px 12px; border-radius: 999px; line-height: 1;
+}
+.chip[aria-pressed="true"] { background: var(--navy); color: var(--surface); }
+.chip:focus-visible, .play:focus-visible, .ghost:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.play {
+  border: 0; background: var(--gold); color: #1a1406; font-weight: 600;
+  padding: 9px 18px; border-radius: 999px; min-width: 96px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.play svg { width: 12px; height: 12px; fill: currentColor; }
+.ghost { border: 1px solid var(--rule); background: transparent; color: var(--fg); padding: 7px 12px; border-radius: 999px; line-height: 1; }
+.tempo { display: flex; align-items: center; gap: 8px; }
+.tempo input { width: 120px; accent-color: var(--gold); }
+.tempo output { font-variant-numeric: tabular-nums; min-width: 52px; }
+/* the one player bar, fixed to the bottom of the screen */
+.player {
+  flex: none; z-index: 6; transition: margin-bottom .25s ease;
+  background: var(--surface); border-top: 1px solid var(--rule);
+  box-shadow: 0 -8px 20px -16px rgba(10,20,50,.6);
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  font-family: var(--ui); font-size: 14px;
+}
+.player.tucked { margin-bottom: calc(-1 * var(--player-h, 80px)); }
+@media (prefers-reduced-motion: reduce) { .player { transition: none; } }
+.player-row { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
+.player .play { min-width: 88px; }
+.part-pick { display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1; }
+.part-pick select {
+  font: inherit; color: var(--fg); background: var(--chip); border: 1px solid transparent; border-radius: 999px;
+  padding: 7px 12px; min-width: 0; max-width: 100%;
+}
+.part-pick select:focus-visible, .icon:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.icon { border: 1px solid var(--rule); background: transparent; color: var(--fg); width: 36px; height: 36px; border-radius: 999px; display: inline-grid; place-items: center; flex: none; }
+.icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon[aria-expanded="true"] { background: var(--navy); color: var(--surface); border-color: var(--navy); }
+.settings { max-width: 1040px; margin: 0 auto 10px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 12px 24px; }
+
+.status { color: var(--muted); font-family: var(--ui); font-size: 14px; margin: 0; min-height: 1.3em; }
+.part-pick select { text-overflow: ellipsis; width: 100%; }
+#score .dim, #score .dim path { opacity: .28; }
+.chords-btn { flex: none; }
+@media (max-width: 560px) { .part-pick .label { display: none; } .player .play { min-width: 0; padding: 9px 14px; } .player-row { gap: 8px; } }
+
+/* the score */
+.sheet { background: var(--paper); color: var(--ink); border-radius: 6px; padding: 18px 10px 8px; box-shadow: 0 1px 0 var(--rule), 0 20px 40px -30px rgba(10,20,50,.55); overflow-x: auto; }
+#score svg { display: block; }
+#score .abcjs-note, #score .abcjs-note * { cursor: pointer; }
+#score .mine, #score .mine path { fill: var(--mine); }
+#score .cue, #score .cue path { fill: #9a3a2c; }
+#score .hl, #score .hl path { fill: var(--hl) !important; }
+#score .abcjs-lyric { fill: #3a4252; }
+/* hymnal-style chords sit just clear of the stems; dynamics move up with them */
+#score .abcjs-chord { transform: translateY(-9px); }
+#score text.abcjs-chord { fill: #1b1f2a !important; }
+#score .abcjs-dynamics, #score .abcjs-decoration { transform: translateY(-4px); }
+.hint { margin: 0; color: var(--muted); font-size: 16px; }
+.loading { padding: 40px 12px; text-align: center; color: #5b6170; font-style: italic; }
+
+/* guitar chord diagrams */
+.diagrams { display: flex; flex-wrap: wrap; gap: 6px 10px; background: var(--paper); border-radius: 6px; padding: 10px 12px; }
+.diagram { margin: 0; }
+.diagram svg { display: block; }
+.diagram line { stroke: #3b4150; stroke-width: 1; }
+.diagram line.nut { stroke-width: 3; }
+.diagram .dot { fill: #1b1f2a; }
+.diagram .open { fill: none; stroke: #1b1f2a; stroke-width: 1.2; }
+.diagram .dname { font: 600 11px var(--ui); fill: #1b1f2a; }
+.diagram .dfr, .diagram .dmark { font: 9px var(--ui); fill: #3b4150; }
+.diagram .dcap { font: 600 10px var(--ui); fill: #9a6a12; }
+.diagrams .capo { flex-basis: 100%; margin: 0 0 2px; font-family: var(--ui); font-size: 13px; color: #3a4252; }
+
+/* YouTube practice tracks */
+.tracks { display: grid; gap: 10px; }
+.tracks h3 { font-family: var(--display); font-size: 13px; letter-spacing: .2em; color: var(--gold); margin: 0; font-weight: 500; text-transform: uppercase; }
+.tracks-note { margin: 0; color: var(--muted); font-family: var(--ui); font-size: 13px; }
+.track-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.track-row a {
+  font-family: var(--display); font-weight: 700; letter-spacing: .06em; color: var(--navy); text-decoration: none;
+  border: 1px solid var(--rule); background: var(--surface); border-radius: 999px; padding: 8px 18px;
+}
+.track-row a::after { content: " ↗"; color: var(--gold); font-family: var(--ui); font-weight: 400; }
+.track-row a:hover { border-color: var(--gold); }
+.track-row a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* text and translation */
+.text { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 40px; }
+.text h3 { font-family: var(--display); font-size: 13px; letter-spacing: .2em; color: var(--gold); margin: 0 0 8px; font-weight: 500; }
+.text p { margin: 0; max-width: 34ch; }
+.text .la { font-style: italic; }
+@media (max-width: 640px) { .text { grid-template-columns: 1fr; } body { font-size: 18px; } .tempo input { width: 96px; } }
+
+footer { color: var(--muted); font-size: 15px; border-top: 1px solid var(--rule); padding-top: 16px; display: grid; gap: 6px; }
+footer a { color: var(--navy); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<main class="scroller" id="scroller"><div class="wrap">
+  <header>
+    <a href="../" aria-label="Cantores Mariani home"><img src="seal.png" alt="Seal of Cantores Mariani: an A and M monogram crowned by twelve stars, ringed with Musica Sacra et Polyphonia" width="440" height="440"></a>
+    <h1>Cantores Mariani</h1>
+    <p class="motto">MVSICA SACRA ET POLYPHONIA</p>
+  </header>
+
+  <section class="piece" aria-labelledby="piece-title">
+    <div class="piece-head">
+      <h2 id="piece-title">Ave Maria</h2>
+      <p class="attrib"><b>Jacob Arcadelt</b> (c. 1505–1568), arr. <b>Pierre-Louis Dietsch</b> (1808–1865) · <span id="arr-label">TTB · G major (men's voices)</span></p>
+    </div>
+
+    <p class="status" id="status" aria-live="polite">Tap any note to hear it. Playback then starts from that note.</p>
+    <div class="sheet"><div id="score"><p class="loading">Setting the score…</p></div></div>
+    <div class="diagrams" id="diagrams" hidden></div>
+    <p class="hint">Your part shows in blue once you pick it. Gold marks the notes sounding now. <span id="chord-note"></span></p>
+  </section>
+
+
+  <section class="tracks" aria-labelledby="tracks-title">
+    <h3 id="tracks-title">Hear your part sung</h3>
+    <div class="track-row">
+      <a href="https://www.youtube.com/watch?v=IJQYZl2zm_8" target="_blank" rel="noopener">Soprano</a>
+      <a href="https://www.youtube.com/watch?v=o8jm8BQ5Yeg" target="_blank" rel="noopener">Alto</a>
+      <a href="https://www.youtube.com/watch?v=OnDTUkSkAa0" target="_blank" rel="noopener">Tenor</a>
+      <a href="https://www.youtube.com/watch?v=O-j2xUlQTfU" target="_blank" rel="noopener">Bass</a>
+    </div>
+    <p class="tracks-note">Opens on YouTube.</p>
+  </section>
+
+  <section class="text" aria-label="Text and translation">
+    <div><h3>LATINE</h3>
+      <p class="la">Ave Maria, gratia plena, Dominus tecum, ave Maria.<br>Benedicta tu in mulieribus, et benedictus fructus ventris tui: Jesus.<br>Sancta Maria, ora pro nobis.</p></div>
+    <div><h3>ENGLISH</h3>
+      <p>Hail Mary, full of grace, the Lord is with thee, hail Mary.<br>Blessed art thou among women, and blessed is the fruit of thy womb: Jesus.<br>Holy Mary, pray for us.</p></div>
+  </section>
+
+  <footer>
+    <span>Arcadelt wrote the music as a three-voice French chanson, <i>Nous voyons que les hommes</i>; Dietsch fitted the Latin text and added the bass in the 1840s.</span>
+    <span>Notes entered from the free edition by Casey Rule at <a href="https://notenova.com/product/ave-maria-jacob-arcadelt-arr-pierre-louis-dietsch/" target="_blank" rel="noopener">NoteNova</a>; dynamics as printed there.</span>
+  </footer>
+</div></main>
+  <div class="player" role="group" aria-label="Player">
+    <div class="settings" id="settings" hidden>
+      <div class="group" aria-label="Choir">
+        <span class="label">Choir</span>
+        <button class="chip" id="arr-ttb" data-arr="ttb" aria-pressed="true">Men (TTB)</button>
+        <button class="chip" id="arr-satb" data-arr="satb" aria-pressed="false">Mixed (SATB)</button>
+      </div>
+      <label class="tempo" for="vol-mine"><span class="label" id="vol-mine-label">Your part</span>
+        <input type="range" id="vol-mine" min="0" max="100" step="5" value="100">
+        <output id="vol-mine-out" for="vol-mine">100%</output>
+      </label>
+      <label class="tempo" for="vol-others"><span class="label">Other parts</span>
+        <input type="range" id="vol-others" min="0" max="100" step="5" value="25">
+        <output id="vol-others-out" for="vol-others">25%</output>
+      </label>
+      <div class="group" aria-label="Chords">
+        <span class="label">Chords</span>
+        <button class="chip" id="ch-off" data-ch="off" aria-pressed="false">Off</button>
+        <button class="chip" id="ch-simple" data-ch="simple" aria-pressed="true">Simple</button>
+        <button class="chip" id="ch-full" data-ch="full" aria-pressed="false">Full</button>
+      </div>
+      <div class="group" aria-label="Guitar chart">
+        <span class="label">Guitar chart</span>
+        <button class="chip" id="gt-off" data-gt="off" aria-pressed="true">Off</button>
+        <button class="chip" id="gt-on" data-gt="on" aria-pressed="false">On</button>
+      </div>
+      <div class="group" aria-label="Sound">
+        <span class="label">Sound</span>
+        <button class="chip" id="snd-voice" data-snd="voice" aria-pressed="true">Voices</button>
+        <button class="chip" id="snd-organ" data-snd="organ" aria-pressed="false">Organ</button>
+      </div>
+      <div class="group" aria-label="Repeat section">
+        <span class="label">Repeat section</span>
+        <button class="chip" id="rep-on" data-rep="on" aria-pressed="true">On</button>
+        <button class="chip" id="rep-off" data-rep="off" aria-pressed="false">Off</button>
+      </div>
+      <label class="tempo" for="tempo"><span class="label">Tempo</span>
+        <input type="range" id="tempo" min="48" max="112" step="2" value="72">
+        <output id="tempo-out" for="tempo">♩ = 72</output>
+      </label>
+    </div>
+    <div class="player-row">
+      <button class="play" id="play"><svg viewBox="0 0 12 12" aria-hidden="true"><path id="play-icon" d="M2 1l9 5-9 5z"/></svg><span id="play-label">Play</span></button>
+      <label class="part-pick" for="part"><span class="label">Part</span>
+        <select id="part"><option value="-1">Full choir</option></select>
+      </label>
+      <label class="part-pick" for="section"><span class="label">Section</span>
+        <select id="section"></select>
+      </label>
+      <button class="chip chords-btn" id="chords-btn" aria-pressed="true" title="Show or hide chords">Chords</button>
+      <button class="icon" id="restart" aria-label="Play from the top" title="Play from the top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.5-3.6"/><path d="M3 2v3h3"/></svg></button>
+      <button class="icon" id="settings-btn" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h7M13 4h1M2 12h1M7 12h7"/><circle cx="11" cy="4" r="2"/><circle cx="5" cy="12" r="2"/></svg></button>
+    </div>
+  </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.4/dist/abcjs-basic-min.js"></script>
+<script>
+// ---------- The music: [S, A, T, B] per printed line; pitch:beats, "!" = fermata, "|" = bar tick ----------
+const LINES = [
+  { dyn: ["mp"],
+    v: ["G4 F4 G4 Eb4 F4 G4:2 | G4 Bb4 Bb4:2 Ab4 G4 F4:2",
+        "Eb4 D4 Bb3 C4 D4 Eb4:2 | Eb4 Eb4 Eb4:2 Eb4:2 D4:2",
+        "Bb3 Bb3 G3 G3 Bb3 Bb3:2 | Bb3 G3 G3:2 C4 Bb3 Bb3:2",
+        "Eb3 Bb2 Eb3 C3 Bb2 Eb3:2 | Eb3 Eb3 Eb3:2 Ab2 Eb3 Bb2:2"],
+    w: "A- ve Ma- ri- _ a, | gra- ti- a ple- _ na" },
+  { dyn: ["p"],
+    v: ["G4 F4 G4 Eb4 F4 G4:2 | F4 G4 Ab4:0.5 G4:0.5 F4:0.5 Eb4:0.5 F4:2 Eb4:2",
+        "Eb4 D4 Bb3 C4 D4 Eb4:2 | D4 Eb4 Eb4 C4 D4:2 Eb4:2",
+        "Bb3 Bb3 G3 G3 Bb3 Bb3:2 | Bb3:2 C4 G3 Bb3:2 G3:2",
+        "Eb3 Bb2 Eb3 C3 Bb2 Eb3:2 | Bb2 Eb3 Ab2 C3 Bb2:2 Eb2:2"],
+    w: "Do- mi- nus te- _ cum, | a- _ ve _ Ma- _ ri- a," },
+  { dyn: ["mp"],
+    v: ["Eb4 Bb4 Bb4 C5 D5 Eb5:2 | D5 Bb4 Bb4 C5 D5 Eb5 Eb5:0.5 D5:0.5 C5:0.5 Bb4:0.5 C5:1.5 C5:0.5 Bb4:2",
+        "Eb4 Eb4 Eb4 Eb4 G4 G4:2 | G4 D4 D4 F4 F4 G4 F4 D4 F4:1.5 F4:0.5 D4:2",
+        "G3 G3 G3 G3 Bn3 C4:2 | Bb3 Bb3 Bb3 An3 Bb3 Bb3 Bb3 Bb3 Bb3 An3 Bb3:2",
+        "Eb3 Eb3 Eb3 C3 G2 C3:2 | G3 G3 G3 F3 Bb2 Eb3 Bb2 G3 F3 F3 Bb2:2"],
+    w: "be- ne- di- cta _ tu, | be- ne- di- cta tu in mu- _ li- _ e- ri- bus," },
+  { dyn: ["mp"],
+    v: ["Eb4 Bb4 Bb4 C5 D5 Eb5:2 | D5 Bb4 Bb4 C5 D5 Eb5:1.5 D5:0.5 C5:0.5 Bb4:0.5 C5:2 Bb4:2!",
+        "Eb4 Eb4 Eb4 Eb4 G4 G4:2 | G4 D4 D4 F4 F4 G4 F4 D4 F4:2 D4:2!",
+        "G3 G3 G3 G3 Bn3 C4:2 | Bb3 Bb3 Bb3 An3 Bb3 Bb3 Bb3:2 Bb3 An3 Bb3:2!",
+        "Eb3 Eb3 Eb3 C3 G2 C3:2 | G3 G3 G3 F3 Bb2 Eb3 Bb2 G3 F3:2 Bb2:2!"],
+    w: "et be- ne- di- _ ctus | fru- ctus ven- _ tris tu- _ i: _ Je- sus." },
+  { dyn: ["f", "mp"],
+    v: ["Eb5 Eb5 D5 C5:2 Bn4:2 | Bb4:2 C5:2 C5:2 Bb4 Ab4:0.5 G4:0.5 Ab4:2 G4",
+        "G4 G4 G4 Eb4:2 D4:2 | D4:2 Eb4:2 Eb4:2 Eb4 Eb4 Eb4:2 Eb4",
+        "Bb3 Bb3 Bb3 G3:2 G3:2 | F3:2 Ab3:2 Ab3:2 G3 Bb3 C4:2 Bb3",
+        "Eb3 Eb3 G3 C3:2 G2:2 | Bb2:2 Ab2:2 Ab2:2 Eb3 Eb3 Ab2:2 Eb3"],
+    w: "San- cta Ma- ri- a, | o- ra, o- ra pro _ no- bis," },
+  { dyn: ["mf"],
+    v: ["G4 Bb4:2 C5 Bb4 Ab4:2 | G4:2 F4 G4 Ab4:0.5 G4:0.5 F4:0.5 Eb4:0.5 F4:2 Eb4:2",
+        "Eb4 Eb4:2 Eb4 Eb4 C4:2 | Eb4:2 Bb3 Bb3 C4 G3 Bb3:2 Bb3:2",
+        "Bb3 G3:2 Ab3 G3 F3:2 | G3:2 Bb3 Eb3 Eb3 Eb3 Eb3 D3 Eb3:2",
+        "Eb3 Eb3:2 Ab2 Eb3 F3:2 | C3:2 D3 Eb3 Ab2 C3 Bb2:2 Eb2:2"],
+    w: "san- cta Ma- ri- a, | o- ra, o- ra _ pro _ no- bis," },
+  { dyn: ["mp", "p"],
+    v: ["Eb4 G4 Bb4:2 C5 Bb4 Ab4:2 | G4:2 F4 G4 Ab4:0.5 G4:0.5 F4:0.5 Eb4:0.5 F4:2 Eb4:2!",
+        "Bb3 Eb4 D4:2 Eb4 Eb4 C4:2 | Eb4:2 Bb3 Bb3 C4 G3 Bb3:2 Bb3:2!",
+        "G3 Eb3 F3:2 Ab3 G3 F3:2 | G3:2 Bb3 Eb3 Eb3 Eb3 Eb3 D3 Eb3:2!",
+        "Eb3 C3 Bb2:2 Ab2 Eb3 F3:2 | C3:2 D3 Eb3 Ab2 C3 Bb2:2 Eb2:2!"],
+    w: "san- _ cta Ma- ri- a, | o- ra, o- ra _ pro _ no- bis." }
+];
+// ---------- Arrangements: the same four printed lines, regrouped for the choir ----------
+// Men (TTB): Arcadelt's own three voices (soprano, alto, tenor lines) an octave down, raised to G major.
+const ARRS = {
+  satb: { label: "SATB · E♭ major", trans: 0, steps: 0, key: "Eb", sig: { B: -1, E: -1, A: -1 }, sharps: false, score: "{(V0 V1) | (V2 V3)}", voices: [
+    { name: "Soprano", src: 0, oct: 0, clef: "treble", stem: "up", form: 0 },
+    { name: "Alto", src: 1, oct: 0, clef: "treble", stem: "down", form: 1 },
+    { name: "Tenor", src: 2, oct: 0, clef: "bass", stem: "up", form: 2 },
+    { name: "Bass", src: 3, oct: 0, clef: "bass", stem: "down", form: 3 }] },
+  ttb: { label: "TTB · G major (men's voices)", trans: 4, steps: 2, key: "G", sig: { F: 1 }, sharps: true, score: "{(V0 V1) | V2}", voices: [
+    { name: "Tenor I", src: 0, oct: -1, clef: "treble-8", stem: "up", form: 2 },
+    { name: "Tenor II", src: 1, oct: -1, clef: "treble-8", stem: "down", form: 2 },
+    { name: "Bass", src: 2, oct: -1, clef: "bass", stem: "auto", form: 3 }] }
+};
+let arrKey = "satb", ARR = ARRS.satb, PART_NAMES = [];
+
+// ---------- Parse into notes ----------
+const BASE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+const KEY_FLATS = new Set(["B", "E", "A"]);
+let notes = [];              // {v, line, bar, midi, beat, dur, ferm, letter, oct, acc, syl, els}
+let lineStartBeat = [], totalBeats = 0, abc = "", startMap = new Map();
+function noteAt(pos) { for (const k of [0, 1, 2, 3, -1, 4, 5]) { const n = startMap.get(pos + k); if (n) return n; } return null; }
+
+function abcPitch(n, barState) {
+  // written letter/octave/alteration in the arrangement's key; accidentals carry through the bar
+  const want = n.wa, o = n.wo, key = n.wl + o;
+  const cur = key in barState ? barState[key] : (ARR.sig[n.wl] || 0);
+  let pre = "";
+  if (cur !== want) { pre = want === -1 ? "_" : want === 1 ? "^" : "="; barState[key] = want; }
+  const p = o >= 5 ? n.wl.toLowerCase() + "'".repeat(o - 5) : n.wl + ",".repeat(4 - o);
+  return pre + p;
+}
+function abcLen(d) { return d === 1 ? "" : Number.isInteger(d) ? String(d) : Number.isInteger(d * 2) ? `${d * 2}/2` : `${d * 4}/4`; }
+
+// ---------- Chords, in E-flat, at the soprano note where each one starts ----------
+const CHORDS = [[0,"Eb"],[1,"Bb"],[2,"Eb"],[3,"Cm"],[4,"Bb"],[5,"Eb"],[11,"Ab"],[12,"Eb"],[13,"Bb"],
+  [15,"Eb"],[16,"Bb"],[17,"Eb"],[18,"Cm"],[19,"Bb"],[20,"Eb"],[22,"Bb"],[23,"Eb"],[24,"Ab"],[25,"Cm"],[26,"Bb"],[28,"Eb"],
+  [30,"Eb"],[33,"Cm"],[34,"G"],[35,"Cm"],[37,"Gm"],[40,"F"],[41,"Bb"],[42,"Eb"],[44,"Gm"],[45,"F"],[47,"Bb"],
+  [49,"Eb"],[52,"Cm"],[53,"G"],[54,"Cm"],[56,"Gm"],[59,"F"],[60,"Bb"],[61,"Eb"],[63,"Gm"],[64,"F"],[66,"Bb"],
+  [68,"Eb"],[70,"Gm"],[71,"Cm"],[73,"G"],[75,"Bb"],[77,"Ab"],[81,"Eb"],[83,"Ab"],[85,"Eb"],
+  [86,"Eb"],[89,"Ab"],[90,"Eb"],[91,"Fm"],[93,"Cm"],[95,"Bb/D"],[96,"Eb"],[97,"Ab"],[98,"Cm"],[99,"Bb"],[101,"Eb"],
+  [103,"Eb"],[104,"Cm"],[105,"Bb"],[107,"Ab"],[108,"Eb"],[109,"Fm"],[111,"Cm"],[113,"Bb/D"],[114,"Eb"],[115,"Ab"],[116,"Cm"],[117,"Bb"],[119,"Eb"]];
+const PC = { C: 0, "C#": 1, Db: 1, D: 2, "D#": 3, Eb: 3, E: 4, F: 5, "F#": 6, Gb: 6, G: 7, "G#": 8, Ab: 8, A: 9, "A#": 10, Bb: 10, B: 11 };
+const SPELL = {
+  flat:  ["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B"],
+  sharp: ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"],
+  shape: ["C", "C♯", "D", "E♭", "E", "F", "F♯", "G", "G♯", "A", "B♭", "B"]
+};
+// Simple: the main chord of each phrase step, without passing chords or inversions
+const CHORDS_SIMPLE = [[0,"Eb"],[4,"Bb"],[5,"Eb"],[11,"Ab"],[12,"Eb"],[13,"Bb"],
+  [15,"Eb"],[19,"Bb"],[20,"Eb"],[22,"Bb"],[23,"Eb"],[24,"Ab"],[26,"Bb"],[28,"Eb"],
+  [30,"Eb"],[33,"Cm"],[34,"G"],[35,"Cm"],[37,"Gm"],[40,"F"],[41,"Bb"],[42,"Eb"],[45,"F"],[47,"Bb"],
+  [49,"Eb"],[52,"Cm"],[53,"G"],[54,"Cm"],[56,"Gm"],[59,"F"],[60,"Bb"],[61,"Eb"],[64,"F"],[66,"Bb"],
+  [68,"Eb"],[71,"Cm"],[73,"G"],[75,"Bb"],[77,"Ab"],[81,"Eb"],[83,"Ab"],[85,"Eb"],
+  [86,"Eb"],[89,"Ab"],[90,"Eb"],[91,"Fm"],[93,"Cm"],[95,"Bb"],[96,"Eb"],[97,"Ab"],[99,"Bb"],[101,"Eb"],
+  [103,"Eb"],[104,"Cm"],[105,"Bb"],[107,"Ab"],[108,"Eb"],[109,"Fm"],[111,"Cm"],[113,"Bb"],[114,"Eb"],[115,"Ab"],[117,"Bb"],[119,"Eb"]];
+let chordDetail = "simple";  // off | simple | full (Simple is the default)
+let guitarChart = false;
+// On phones, long phrases are split at these beats (every voice has a note starting there)
+const NARROW_SPLITS = new Set([43, 61, 81, 97, 115]);
+let narrowBuild = false;
+function chordInfo() {
+  // returns {shift, spell, capo}: how chord names are shown for this choir and instrument
+  return { shift: ARR.trans, spell: ARR.sharps ? "sharp" : "flat" };
+}
+function chordName(name) {
+  const { shift, spell } = chordInfo();
+  const t = n => SPELL[spell][(PC[n] + shift + 12) % 12];
+  const [main, bass] = name.split("/");
+  const m = main.match(/^([A-G][b#]?)(.*)$/);
+  return t(m[1]) + m[2] + (bass ? "/" + t(bass) : "");
+}
+// Guitar shape to play with capo on fret 3 for a chord written in E-flat (e.g. Eb -> C, Bb -> G)
+function capoShape(name) {
+  const [m, b] = name.split("/"), x = m.match(/^([A-G]b?)(.*)$/);
+  const t = r => SPELL.shape[(PC[r] - 3 + 12) % 12];
+  return t(x[1]) + x[2] + (b ? "/" + t(b) : "");
+}
+const twoRows = () => guitarChart && ARR.trans === 0;
+const chordList = () => chordDetail === "simple" ? CHORDS_SIMPLE : CHORDS;
+let chordAt = new Map(CHORDS.map(([b, n]) => [b, n]));
+
+const simpleAt = new Map(CHORDS_SIMPLE.map(([b, n]) => [b, n]));
+function build(key) {
+  chordAt = new Map(CHORDS.map(([b, n]) => [b, n]));   // layout always reserves room for Full; Simple hides extras after drawing
+  arrKey = key; ARR = ARRS[key]; PART_NAMES = ARR.voices.map(x => x.name);
+  notes = []; lineStartBeat = []; totalBeats = 0; startMap = new Map();
+  LINES.forEach((ln, li) => {
+    lineStartBeat.push(totalBeats);
+    let lineLen = 0;
+    ARR.voices.forEach((vd, v) => {
+      let beat = totalBeats;
+      const sylls = v === 0 ? ln.w.replace(/\|/g, " ").split(/\s+/).filter(Boolean) : [];
+      let si = 0, bar = 0;
+      ln.v[vd.src].split(/\s+/).forEach(tok => {
+        if (tok === "|") { bar++; return; }
+        const m = tok.match(/^([A-G])(b|n)?(\d)(?::([\d.]+))?(!)?$/);
+        if (!m) throw new Error("Bad token " + tok);
+        const [, letter, acc, o, d, f] = m;
+        const dur = d ? parseFloat(d) : 1, oct = +o + vd.oct;
+        const midi = 12 * (oct + 1) + BASE[letter] + (acc === "b" ? -1 : 0) + ARR.trans;
+        const shown = oct + (vd.clef === "treble-8" ? 1 : 0);          // tenor clef is written an octave up
+        const LET = "CDEFGAB", idx = LET.indexOf(letter) + ARR.steps;
+        const wl = LET[idx % 7], wo = shown + Math.floor(idx / 7);
+        const wa = midi + 12 * (shown - oct) - (12 * (wo + 1) + BASE[wl]);   // -1 flat, 0 natural, +1 sharp
+        notes.push({ v, line: li, bar, midi, beat, dur, ferm: !!f, letter, oct, shown, wl, wo, wa, acc: acc || "", syl: sylls[si++] || "", els: [] });
+        beat += dur;
+      });
+      lineLen = Math.max(lineLen, beat - totalBeats);
+    });
+    totalBeats += lineLen;
+  });
+  const showChords = chordDetail !== "off";
+  abc = `X:1\nM:none\nL:1/4\n%%score ${ARR.score}\n` +
+    ARR.voices.map((vd, v) => `V:V${v} clef=${vd.clef}${vd.stem === "auto" ? "" : " stem=" + vd.stem}\n`).join("") + `K:${ARR.key}\n` + "%%gchordfont Helvetica 13\n" + (chordDetail !== "off" ? "%%staffsep 92\n" : "");
+  const ascii = t => t.replace(/♭/g, "b").replace(/♯/g, "#");
+  LINES.forEach((ln, li) => {
+    ARR.voices.forEach((vd, v) => {
+      abc += `[V:V${v}] `;
+      if (li === 0 && showChords && twoRows()) abc += v === 0 ? `"Capo 3""" x2 ` : "x2 ";
+      const ns = notes.filter(n => n.line === li && n.v === v);
+      let barState = {}, curBar = 0, prevEighth = false, dynI = 0;
+      ns.forEach((n, i) => {
+        if (n.bar !== curBar) { abc += "| "; barState = {}; curBar = n.bar; prevEighth = false; }
+        else if (narrowBuild && i > 0 && NARROW_SPLITS.has(n.beat)) { abc += " [|] "; barState = {}; prevEighth = false; }
+        let deco = "";
+        if (v === 0 && ((i === 0) || (n.bar !== ns[i - 1].bar)) && ln.dyn[dynI]) deco += `!${ln.dyn[dynI++]}!`;
+        if (n.ferm) deco += "!fermata!";
+        if (v === 0 && showChords && chordAt.has(n.beat)) {
+          const c = chordAt.get(n.beat);
+          deco = (twoRows() ? `"(${ascii(capoShape(c))})""${ascii(chordName(c))}"` : `"${ascii(chordName(c))}"`) + deco;
+        }
+        const eighth = n.dur === 0.5;
+        if (!(eighth && prevEighth)) abc += " ";
+        startMap.set(abc.length, n);   // abcjs may count a note from its annotations or decorations
+        abc += deco;
+        startMap.set(abc.length, n);
+        abc += abcPitch(n, barState) + abcLen(n.dur);
+        prevEighth = eighth;
+      });
+      abc += li === LINES.length - 1 ? " |]\n" : " |\n";
+      if (v === 0) abc += "w: " + ln.w + "\n";
+    });
+  });
+}
+build("ttb");
+
+// ---------- Timing (fermatas held a little longer) ----------
+const tempoEl = document.getElementById("tempo");
+let spb = 60 / +tempoEl.value;
+const fermataEnds = [...new Set(notes.filter(n => n.ferm).map(n => n.beat + n.dur))];
+function timeOf(b) {
+  let t = b * spb;
+  fermataEnds.forEach(e => { if (e <= b + 1e-6) t += 2 * spb * 0.9; });
+  return t;
+}
+
+// ---------- Audio ----------
+let ctx = null, wave = null, out = null, voiceGain = [], voiceIn = [], live = [];
+let part = -1, mix = "soft", sound = "voice";
+// "Ah" vowel resonances for each voice type: [freq Hz, level, bandwidth Hz]
+const FORMANTS = [
+  [[850, 1, 80], [1220, 0.45, 90], [2800, 0.2, 120]],   // soprano
+  [[800, 1, 80], [1150, 0.45, 90], [2800, 0.16, 120]],  // alto
+  [[650, 1, 80], [1080, 0.42, 90], [2650, 0.2, 120]],   // tenor
+  [[600, 1, 60], [1040, 0.4, 70], [2250, 0.16, 110]]    // bass
+];
+function vowel(v, dest) {
+  const input = ctx.createGain(), sum = ctx.createGain();
+  sum.gain.value = 5.6;
+  FORMANTS[ARR.voices[v] ? ARR.voices[v].form : 3].forEach(([f, lvl, bw]) => {
+    const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = f; bp.Q.value = f / bw;
+    const g = ctx.createGain(); g.gain.value = lvl;
+    input.connect(bp).connect(g).connect(sum);
+  });
+  const body = ctx.createBiquadFilter(); body.type = "lowpass"; body.frequency.value = 900;
+  const bg = ctx.createGain(); bg.gain.value = 0.12;
+  input.connect(body).connect(bg).connect(sum);
+  sum.connect(dest);
+  return input;
+}
+function ensureAudio() {
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const real = new Float32Array([0, 1, 0.38, 0.16, 0.08, 0.035, 0.015]);
+    wave = ctx.createPeriodicWave(real, new Float32Array(real.length));
+    out = ctx.createDynamicsCompressor();
+    out.connect(ctx.destination);
+    for (let v = 0; v < 4; v++) {
+      const g = ctx.createGain(); g.connect(out); voiceGain.push(g);
+      voiceIn.push(vowel(v, g));
+    }
+    applyMix();
+  }
+  if (ctx.state === "suspended") ctx.resume();
+}
+// one note, sung or on the organ; dest = the voice's mix gain
+function note(v, midi, t0, dur, dest, vol) {
+  if (sound === "organ") return tone(midi, t0, dur, dest, vol);
+  const freq = 440 * Math.pow(2, (midi - 69) / 12);
+  const end = t0 + Math.max(0.12, dur - 0.03);
+  const env = ctx.createGain();
+  env.gain.setValueAtTime(0, t0);
+  env.gain.linearRampToValueAtTime(vol, t0 + 0.09);
+  env.gain.setValueAtTime(vol * 0.9, Math.max(t0 + 0.1, end - 0.12));
+  env.gain.linearRampToValueAtTime(0, end);
+  env.connect(dest === voiceGain[v] ? voiceIn[v] : vowel(v, dest));
+  // gentle vibrato that blooms on longer notes
+  const lfo = ctx.createOscillator(), depth = ctx.createGain();
+  lfo.frequency.value = 5.2 + v * 0.15;
+  depth.gain.setValueAtTime(0, t0);
+  depth.gain.linearRampToValueAtTime(0, t0 + 0.25);
+  depth.gain.linearRampToValueAtTime(16, t0 + 0.75);
+  lfo.connect(depth);
+  // two slightly detuned voices make a small section
+  [-6, 6].forEach(cents => {
+    const o = ctx.createOscillator();
+    o.type = "sawtooth"; o.frequency.value = freq; o.detune.value = cents;
+    depth.connect(o.detune);
+    const g = ctx.createGain(); g.gain.value = 0.5;
+    o.connect(g).connect(env);
+    o.start(t0); o.stop(end + 0.03); live.push(o);
+  });
+  lfo.start(t0); lfo.stop(end + 0.03); live.push(lfo);
+}
+function applyMix() {
+  if (!ctx) return;
+  voiceGain.forEach((g, v) => {
+    const mine = +document.getElementById("vol-mine").value / 100, others = +document.getElementById("vol-others").value / 100;
+    const val = part < 0 ? 0.55 * mine : 0.8 * (v === part ? mine : others);
+    g.gain.setTargetAtTime(val, ctx.currentTime, 0.03);
+  });
+}
+function tone(midi, t0, dur, dest, vol = 0.32) {
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.setPeriodicWave(wave);
+  o.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+  const end = t0 + Math.max(0.08, dur - 0.035);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(vol, t0 + 0.045);
+  g.gain.setValueAtTime(vol * 0.88, Math.max(t0 + 0.05, end - 0.07));
+  g.gain.linearRampToValueAtTime(0, end);
+  o.connect(g).connect(dest);
+  o.start(t0); o.stop(end + 0.02);
+  live.push(o);
+}
+
+// ---------- Playback ----------
+let playing = false, t0 = 0, startBeat = 0, raf = 0, lit = new Set(), cueNote = null;
+const playBtn = document.getElementById("play"), statusEl = document.getElementById("status");
+function setLit(set) {
+  lit.forEach(n => { if (!set.has(n)) n.els.forEach(e => e.classList.remove("hl")); });
+  set.forEach(n => { if (!lit.has(n)) n.els.forEach(e => e.classList.add("hl")); });
+  lit = set;
+}
+function play(fromBeat) {
+  ensureAudio(); stop(true);
+  startBeat = fromBeat; spb = 60 / +tempoEl.value;
+  t0 = ctx.currentTime + 0.12;
+  const offset = timeOf(startBeat);
+  const endBeat = secTo;
+  notes.forEach(n => {
+    if (n.beat + 1e-6 < startBeat || n.beat > endBeat - 1e-6) return;
+    const s = t0 + timeOf(n.beat) - offset;
+    const d = timeOf(n.beat + n.dur) - timeOf(n.beat);
+    note(n.v, n.midi, s, d, voiceGain[n.v], 0.32);
+  });
+  playing = true; setPlayUI();
+  const endT = timeOf(endBeat) - offset;
+  let lastScroll = null;
+  const tick = () => {
+    const now = ctx.currentTime - t0;
+    if (now > endT + 0.2) {
+      if (repeat && !wholePiece()) { setLit(new Set()); raf = 0; setTimeout(() => { if (playing) play(secFrom); }, 700); return; }
+      stop(); setStartAt(null); return;
+    }
+    const absT = now + offset, on = new Set();
+    for (const n of notes) {
+      if (n.beat + 1e-6 < startBeat || n.beat > endBeat - 1e-6) continue;
+      if (absT >= timeOf(n.beat) && absT < timeOf(n.beat + n.dur)) on.add(n);
+    }
+    setLit(on);
+    const lead = [...on].find(n => n.v === (part < 0 ? 0 : part)) || [...on][0];
+    if (lead && lead.els[0] && lead !== lastScroll) {
+      lastScroll = lead;
+      const r = lead.els[0].getBoundingClientRect();
+      const box = document.getElementById("scroller").getBoundingClientRect();
+      if (r.top < box.top + 110 || r.bottom > box.bottom - 30) (autoScrollUntil = Date.now() + 900), lead.els[0].scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    }
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+}
+function stop(silent) {
+  cancelAnimationFrame(raf);
+  live.forEach(o => { try { o.stop(); } catch (e) {} }); live = [];
+  setLit(new Set());
+  playing = false; if (!silent) setPlayUI();
+}
+function currentBeat() {
+  if (!playing || !ctx) return startBeat;
+  const absT = ctx.currentTime - t0 + timeOf(startBeat);
+  let b = startBeat; for (const n of notes) if (timeOf(n.beat) <= absT && n.beat > b) b = n.beat;
+  return b;
+}
+function setPlayUI() {
+  document.getElementById("play-label").textContent = playing ? "Stop" : "Play";
+  document.getElementById("play-icon").setAttribute("d", playing ? "M2 2h8v8H2z" : "M2 1l9 5-9 5z");
+}
+const settingsBtn = document.getElementById("settings-btn"), settingsEl = document.getElementById("settings");
+const playerEl = document.querySelector(".player"), scroller = document.getElementById("scroller");
+let lastTop = 0, autoScrollUntil = 0;
+function tuck(hide) {
+  if (hide && !settingsEl.hidden) {                          // scrolling down closes Settings too
+    settingsEl.hidden = true; settingsBtn.setAttribute("aria-expanded", "false");
+  }
+  if (hide) playerEl.style.setProperty("--player-h", playerEl.offsetHeight + "px");
+  playerEl.classList.toggle("tucked", hide);
+}
+scroller.addEventListener("scroll", () => {
+  const top = scroller.scrollTop, d = top - lastTop;
+  if (Date.now() < autoScrollUntil) { lastTop = top; return; }
+  if (d > 8 && top > 120) tuck(true);
+  else if (d < -8 || top < 40) tuck(false);
+  lastTop = top;
+}, { passive: true });
+settingsBtn.addEventListener("click", () => {
+  settingsEl.hidden = !settingsEl.hidden;
+  settingsBtn.setAttribute("aria-expanded", String(!settingsEl.hidden));
+});
+function setStartAt(n) {
+  if (cueNote) cueNote.els.forEach(e => e.classList.remove("cue"));
+  cueNote = n;
+  if (n) {
+    n.els.forEach(e => e.classList.add("cue"));
+    const word = notes.filter(m => m.v === 0 && Math.abs(m.beat - n.beat) < 1e-6 || (m.v === 0 && m.beat < n.beat && m.beat + m.dur > n.beat))[0];
+    const syl = word && word.syl && word.syl !== "_" ? `“${word.syl.replace(/[-,.:]/g, "")}”` : "this note";
+    statusEl.textContent = `${PART_NAMES[n.v]} ${noteName(n)}. Play starts at ${syl}, line ${n.line + 1}.`;
+  } else statusEl.textContent = "Tap any note to hear it. Playback then starts from that note.";
+}
+const FLAT_NAMES = ["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B"];
+const SHARP_NAMES = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+function noteName(n) { return (ARR.sharps ? SHARP_NAMES : FLAT_NAMES)[n.midi % 12] + (Math.floor(n.midi / 12) - 1); }
+
+// ---------- Sections: each printed line is one phrase of the text ----------
+const GROUPS = [
+  { name: "I. Ave Maria", lines: [0, 1] },
+  { name: "II. Benedicta", lines: [2, 3] },
+  { name: "III. Sancta Maria", lines: [4, 5, 6] }
+];
+const PHRASES = ["Ave Maria, gratia plena", "Dominus tecum, ave Maria", "Benedicta tu in mulieribus",
+  "Et benedictus fructus ventris tui: Jesus", "Sancta Maria, ora pro nobis", "Sancta Maria (2nd time)", "Sancta Maria (ending)"];
+const lineEnd = i => i + 1 < LINES.length ? lineStartBeat[i + 1] : totalBeats;
+let secFrom = 0, secTo = totalBeats, repeat = true;
+const wholePiece = () => secFrom === 0 && secTo === totalBeats;
+const sectionEl = document.getElementById("section");
+sectionEl.innerHTML = `<option value="0-6">Whole piece</option>` + GROUPS.map(g =>
+  `<optgroup label="${g.name}"><option value="${g.lines[0]}-${g.lines[g.lines.length - 1]}">${g.name}, all</option>` +
+  g.lines.map(i => `<option value="${i}-${i}">${i + 1}. ${PHRASES[i]}</option>`).join("") + `</optgroup>`).join("");
+function chooseSection(val) {
+  sectionEl.value = val;
+  const [a, b] = val.split("-").map(Number);
+  secFrom = lineStartBeat[a]; secTo = lineEnd(b);
+  setStartAt(null); paintMine();
+  const first = notes.find(n => n.beat >= secFrom && n.els.length);
+  if (first && !wholePiece()) first.els[0].scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  if (!wholePiece()) statusEl.textContent = `${sectionEl.selectedOptions[0].textContent}${repeat ? ", repeating" : ""}. Press Play.`;
+  if (playing) play(secFrom);
+}
+sectionEl.addEventListener("change", e => chooseSection(e.target.value));
+document.querySelectorAll("[data-rep]").forEach(b => b.addEventListener("click", () => {
+  repeat = b.dataset.rep === "on";
+  document.querySelectorAll("[data-rep]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+}));
+
+playBtn.addEventListener("click", () => playing ? stop() : play(cueNote ? cueNote.beat : secFrom));
+document.getElementById("restart").addEventListener("click", () => { setStartAt(null); play(secFrom); });
+tempoEl.addEventListener("input", () => {
+  document.getElementById("tempo-out").textContent = "♩ = " + tempoEl.value;
+  if (playing) play(currentBeat());
+});
+document.getElementById("part").addEventListener("change", e => {
+  part = +e.target.value;
+  paintMine(); applyMix(); syncVolumeLabels();
+  if (part >= 0) statusEl.textContent = `${PART_NAMES[part]} is in front; the other parts play at ${document.getElementById("vol-others").value}%. Change both volumes under Settings.`;
+});
+["vol-mine", "vol-others"].forEach(id => document.getElementById(id).addEventListener("input", e => {
+  document.getElementById(id + "-out").textContent = e.target.value + "%";
+  applyMix();
+}));
+function syncVolumeLabels() {
+  document.getElementById("vol-mine-label").textContent = part < 0 ? "Volume" : PART_NAMES[part];
+  document.querySelector('label[for="vol-others"]').hidden = part < 0;
+}
+syncVolumeLabels();
+document.querySelectorAll("[data-snd]").forEach(b => b.addEventListener("click", () => {
+  sound = b.dataset.snd;
+  document.querySelectorAll("[data-snd]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  if (playing) play(currentBeat());
+}));
+function paintMine() {
+  notes.forEach(n => n.els.forEach(e => {
+    e.classList.toggle("mine", n.v === part);
+    e.classList.toggle("dim", n.beat < secFrom - 1e-6 || n.beat > secTo - 1e-6);
+  }));
+}
+
+// ---------- Render the score and link every drawn note back to its data ----------
+let layout = "";
+function render() {
+  if (!window.ABCJS) { document.getElementById("score").innerHTML = '<p class="loading">The score could not load. Check your connection and reload the page.</p>'; return; }
+  const w = document.getElementById("score").clientWidth || 800;
+  const narrow = w < 640;
+  const want = narrow ? "narrow" : "wide";
+  if (want === layout) return;
+  layout = want;
+  if (narrowBuild !== narrow) {
+    const cue = cueNote ? { v: cueNote.v, beat: cueNote.beat } : null;
+    if (playing) stop();
+    narrowBuild = narrow; build(arrKey);
+    cueNote = cue ? notes.find(n => n.v === cue.v && n.beat === cue.beat) || null : null;
+  }
+  notes.forEach(n => n.els = []);
+  const opts = {
+    add_classes: true, responsive: "resize", paddingleft: 4, paddingright: 4,
+    clickListener: (el) => {
+      const n = noteAt(el.startChar); if (!n) return;
+      ensureAudio();
+      const t = ctx.currentTime + 0.02;
+      note(n.v, n.midi, t, 1.1, out, 0.34);
+      n.els.forEach(e => { e.classList.add("hl"); setTimeout(() => lit.has(n) || e.classList.remove("hl"), 650); });
+      if (playing) stop();
+      if (n.beat < secFrom - 1e-6 || n.beat > secTo - 1e-6) chooseSection("0-6");
+      setStartAt(n);
+    }
+  };
+  if (narrow) Object.assign(opts, { staffwidth: Math.max(300, w - 12), wrap: { minSpacing: 1.6, maxSpacing: 2.6, preferredMeasuresPerLine: 1 } });
+  else opts.staffwidth = 980;
+  const tune = ABCJS.renderAbc("score", abc, opts)[0];
+  tune.lines.forEach(line => (line.staff || []).forEach(st => st.voices.forEach(voice => voice.forEach(el => {
+    if (el.el_type !== "note" || el.rest) return;
+    const n = noteAt(el.startChar);
+    if (n && el.abselem) n.els = el.abselem.elemset.slice();
+  }))));
+  if (chordDetail === "simple") {
+    notes.forEach(n => {
+      if (n.v !== 0 || !chordAt.has(n.beat)) return;
+      const texts = n.els.flatMap(e => [...(e.matches(".abcjs-chord") ? [e] : []), ...e.querySelectorAll(".abcjs-chord")]);
+      const simple = simpleAt.get(n.beat);
+      if (!simple) { texts.forEach(t => t.setAttribute("visibility", "hidden")); return; }
+      const want = twoRows() ? [`(${capoShape(simple)})`, chordName(simple)] : [chordName(simple)];
+      texts.forEach((t, i) => { if (want[i] && t.textContent !== want[i]) t.textContent = want[i]; });
+    });
+  }
+  paintMine();
+  if (cueNote) cueNote.els.forEach(e => e.classList.add("cue"));
+}
+function fillParts() {
+  document.getElementById("part").innerHTML = `<option value="-1">Full choir</option>` +
+    PART_NAMES.map((n, i) => `<option value="${i}">${n}</option>`).join("");
+}
+function setArrangement(key) {
+  if (key === arrKey) return;
+  if (playing) stop();
+  const sec = sectionEl.value;
+  setStartAt(null);
+  build(key);
+  part = -1; fillParts(); syncVolumeLabels(); applyMix();
+  if (ctx) voiceIn = voiceGain.map((g, v) => vowel(v, g));
+  document.getElementById("arr-label").textContent = ARR.label;
+  document.querySelectorAll("[data-arr]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.arr === key)));
+  layout = ""; render();
+  chooseSection(sec); chordNote();
+  statusEl.textContent = key === "ttb"
+    ? "Men's version: Tenor I takes the melody, Tenor II the middle line, Bass the low line, in G major."
+    : "Mixed choir version: soprano, alto, tenor and bass, in E♭ major, as printed.";
+}
+document.querySelectorAll("[data-arr]").forEach(b => b.addEventListener("click", () => setArrangement(b.dataset.arr)));
+function chordNote() {
+  const el = document.getElementById("chord-note");
+  drawDiagrams();
+  if (chordDetail === "off" && !guitarChart) { el.textContent = ""; return; }
+  el.textContent = chordDetail === "off" ? "" : twoRows()
+    ? `Chords: top row guitar (capo 3), bottom row piano (E♭ major)${chordDetail === "simple" ? ", main chords only" : ""}. Guitar chart below the music.`
+    : `Chords in ${ARR.trans ? "G" : "E♭"} major, as sung${chordDetail === "simple" ? " (main chords only)" : ""}${guitarChart ? "; guitar chart below the music" : ""}.`;
+}
+// Guitar fingerings, low E to high e: x = don't play, 0 = open, n = fret
+const SHAPES = {
+  "E♭": "xx1343", "B♭": "x13331", "Cm": "x35543", "A♭": "466544", "G": "320003", "Gm": "355333",
+  "F": "xx3211", "Fm": "133111", "B♭/D": "xx0331", "E": "022100", "Dm": "xx0231", "G/B": "x20003",
+  "D": "xx0232", "Em": "022000", "C": "x32010", "B": "x24442", "Bm": "x24432", "A": "x02220", "Am": "x02210", "D/F♯": "2x0232"
+};
+function diagramSVG(name, caption) {
+  const f = SHAPES[name]; if (!f) return "";
+  const frets = [...f].map(c => c === "x" ? -1 : +c), played = frets.filter(n => n > 0);
+  const lo = Math.min(...played), hi = Math.max(...played);
+  const base = hi > 4 ? lo : 1;                 // show higher positions from their lowest fret
+  const X = i => 10 + i * 10, Y = r => 22 + r * 12;
+  let g = `<text x="35" y="9" text-anchor="middle" class="dname">${name}</text>`;
+  for (let i = 0; i < 6; i++) g += `<line x1="${X(i)}" y1="${Y(0)}" x2="${X(i)}" y2="${Y(4)}"/>`;
+  for (let r = 0; r <= 4; r++) g += `<line x1="${X(0)}" y1="${Y(r)}" x2="${X(5)}" y2="${Y(r)}"${r === 0 && base === 1 ? ' class="nut"' : ""}/>`;
+  if (base > 1) g += `<text x="64" y="${Y(0) + 9}" class="dfr">${base}fr</text>`;
+  frets.forEach((n, i) => {
+    if (n < 0) g += `<text x="${X(i)}" y="${Y(0) - 3}" text-anchor="middle" class="dmark">×</text>`;
+    else if (n === 0) g += `<circle cx="${X(i)}" cy="${Y(0) - 6}" r="2.6" class="open"/>`;
+    else g += `<circle cx="${X(i)}" cy="${Y(n - base) + 6}" r="3.6" class="dot"/>`;
+  });
+  if (caption) g += `<text x="35" y="82" text-anchor="middle" class="dcap">${caption}</text>`;
+  const h = caption ? 86 : 74;
+  return `<figure class="diagram"><svg viewBox="0 0 74 ${h}" width="74" height="${h}" role="img" aria-label="${name} guitar chord${caption ? ", " + caption : ""}">${g}</svg></figure>`;
+}
+function drawDiagrams() {
+  const box = document.getElementById("diagrams");
+  if (!guitarChart) { box.hidden = true; box.innerHTML = ""; return; }
+  const list = chordDetail === "simple" ? CHORDS_SIMPLE : CHORDS;
+  const concert = [...new Set(list.map(([, n]) => n))];   // E-flat names
+  if (ARR.trans === 0) {
+    // Mixed version in E-flat: capo on fret 3, play C-family shapes
+    box.innerHTML = `<p class="capo"><b>Guitar chart · capo on fret 3.</b> Play the shape; it sounds the piano chord shown under it.</p>` +
+      concert.map(n => diagramSVG(capoShape(n), "= " + chordName(n))).join("");
+  } else {
+    box.innerHTML = `<p class="capo"><b>Guitar chart · no capo.</b> Open chords in G, the same as the piano.</p>` + concert.map(n => diagramSVG(chordName(n))).join("");
+  }
+  box.hidden = false;
+}
+function rerenderChords() {
+  if (playing) stop();
+  const cue = cueNote ? { v: cueNote.v, beat: cueNote.beat } : null;
+  build(arrKey); layout = ""; render();
+  if (cue) setStartAt(notes.find(n => n.v === cue.v && n.beat === cue.beat) || null);
+  chordNote();
+}
+let lastDetail = "simple";
+function setChordDetail(d) {
+  chordDetail = d;
+  if (d !== "off") lastDetail = d;
+  document.querySelectorAll("[data-ch]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.ch === d)));
+  document.getElementById("chords-btn").setAttribute("aria-pressed", String(d !== "off"));
+  rerenderChords();
+}
+document.querySelectorAll("[data-ch]").forEach(b => b.addEventListener("click", () => setChordDetail(b.dataset.ch)));
+document.getElementById("chords-btn").addEventListener("click", () => setChordDetail(chordDetail === "off" ? lastDetail : "off"));
+document.querySelectorAll("[data-gt]").forEach(b => b.addEventListener("click", () => {
+  guitarChart = b.dataset.gt === "on";
+  document.querySelectorAll("[data-gt]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  rerenderChords();
+}));
+fillParts();
+render(); chordNote();
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 200); });
+</script>
+</body>
+</html>
