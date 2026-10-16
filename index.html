@@ -61,7 +61,10 @@ h1 { font-family: var(--display); font-weight: 700; letter-spacing: .12em; font-
 .motto { font-family: var(--display); font-weight: 500; letter-spacing: .28em; font-size: 14px; color: var(--gold); margin: 0; }
 
 .piece { display: grid; gap: 18px; }
-.piece-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; border-bottom: 1px solid var(--rule); padding-bottom: 12px; }
+.piece-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 24px;
+  border-bottom: 1px solid var(--rule); padding: 10px 0 10px;
+}
 h2 { font-family: var(--display); font-weight: 700; letter-spacing: .06em; font-size: clamp(24px, 4vw, 32px); margin: 0; color: var(--navy); }
 .attrib { margin: 0; color: var(--muted); font-style: italic; }
 .attrib b { font-style: normal; font-weight: 500; color: var(--fg); }
@@ -92,12 +95,14 @@ button { font: inherit; cursor: pointer; }
 .tempo output { font-variant-numeric: tabular-nums; min-width: 52px; }
 /* the one player bar, fixed to the bottom of the screen */
 .player {
-  flex: none; z-index: 6;
+  flex: none; z-index: 6; transition: margin-bottom .25s ease;
   background: var(--surface); border-top: 1px solid var(--rule);
   box-shadow: 0 -8px 20px -16px rgba(10,20,50,.6);
   padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
   font-family: var(--ui); font-size: 14px;
 }
+.player.tucked { margin-bottom: calc(-1 * var(--player-h, 80px)); }
+@media (prefers-reduced-motion: reduce) { .player { transition: none; } }
 .player-row { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
 .player .play { min-width: 88px; }
 .part-pick { display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1; }
@@ -127,7 +132,8 @@ button { font: inherit; cursor: pointer; }
 #score .abcjs-lyric { fill: #3a4252; }
 /* hymnal-style chords sit just clear of the stems; dynamics move up with them */
 #score .abcjs-chord { transform: translateY(-9px); }
-#score .abcjs-dynamics, #score .abcjs-decoration { transform: translateY(-14px); }
+#score text.abcjs-chord { fill: #1b1f2a !important; }
+#score .abcjs-dynamics, #score .abcjs-decoration { transform: translateY(-4px); }
 .hint { margin: 0; color: var(--muted); font-size: 16px; }
 .loading { padding: 40px 12px; text-align: center; color: #5b6170; font-style: italic; }
 
@@ -397,8 +403,9 @@ const twoRows = () => guitarChart && ARR.trans === 0;
 const chordList = () => chordDetail === "simple" ? CHORDS_SIMPLE : CHORDS;
 let chordAt = new Map(CHORDS.map(([b, n]) => [b, n]));
 
+const simpleAt = new Map(CHORDS_SIMPLE.map(([b, n]) => [b, n]));
 function build(key) {
-  chordAt = new Map(chordList().map(([b, n]) => [b, n]));
+  chordAt = new Map(CHORDS.map(([b, n]) => [b, n]));   // layout always reserves room for Full; Simple hides extras after drawing
   arrKey = key; ARR = ARRS[key]; PART_NAMES = ARR.voices.map(x => x.name);
   notes = []; lineStartBeat = []; totalBeats = 0; startMap = new Map();
   LINES.forEach((ln, li) => {
@@ -428,7 +435,7 @@ function build(key) {
   });
   const showChords = chordDetail !== "off";
   abc = `X:1\nM:none\nL:1/4\n%%score ${ARR.score}\n` +
-    ARR.voices.map((vd, v) => `V:V${v} clef=${vd.clef}${vd.stem === "auto" ? "" : " stem=" + vd.stem}\n`).join("") + `K:${ARR.key}\n` + "%%gchordfont Helvetica 13\n";
+    ARR.voices.map((vd, v) => `V:V${v} clef=${vd.clef}${vd.stem === "auto" ? "" : " stem=" + vd.stem}\n`).join("") + `K:${ARR.key}\n` + "%%gchordfont Helvetica 13\n" + (chordDetail !== "off" ? "%%staffsep 92\n" : "");
   const ascii = t => t.replace(/♭/g, "b").replace(/♯/g, "#");
   LINES.forEach((ln, li) => {
     ARR.voices.forEach((vd, v) => {
@@ -601,7 +608,7 @@ function play(fromBeat) {
       lastScroll = lead;
       const r = lead.els[0].getBoundingClientRect();
       const box = document.getElementById("scroller").getBoundingClientRect();
-      if (r.top < box.top + 40 || r.bottom > box.bottom - 30) lead.els[0].scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      if (r.top < box.top + 110 || r.bottom > box.bottom - 30) (autoScrollUntil = Date.now() + 900), lead.els[0].scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     }
     raf = requestAnimationFrame(tick);
   };
@@ -624,6 +631,20 @@ function setPlayUI() {
   document.getElementById("play-icon").setAttribute("d", playing ? "M2 2h8v8H2z" : "M2 1l9 5-9 5z");
 }
 const settingsBtn = document.getElementById("settings-btn"), settingsEl = document.getElementById("settings");
+const playerEl = document.querySelector(".player"), scroller = document.getElementById("scroller");
+let lastTop = 0, autoScrollUntil = 0;
+function tuck(hide) {
+  if (hide && !settingsEl.hidden) hide = false;              // never hide while Settings is open
+  if (hide) playerEl.style.setProperty("--player-h", playerEl.offsetHeight + "px");
+  playerEl.classList.toggle("tucked", hide);
+}
+scroller.addEventListener("scroll", () => {
+  const top = scroller.scrollTop, d = top - lastTop;
+  if (Date.now() < autoScrollUntil) { lastTop = top; return; }
+  if (d > 8 && top > 120) tuck(true);
+  else if (d < -8 || top < 40) tuck(false);
+  lastTop = top;
+}, { passive: true });
 settingsBtn.addEventListener("click", () => {
   settingsEl.hidden = !settingsEl.hidden;
   settingsBtn.setAttribute("aria-expanded", String(!settingsEl.hidden));
@@ -742,6 +763,16 @@ function render() {
     const n = noteAt(el.startChar);
     if (n && el.abselem) n.els = el.abselem.elemset.slice();
   }))));
+  if (chordDetail === "simple") {
+    notes.forEach(n => {
+      if (n.v !== 0 || !chordAt.has(n.beat)) return;
+      const texts = n.els.flatMap(e => [...(e.matches(".abcjs-chord") ? [e] : []), ...e.querySelectorAll(".abcjs-chord")]);
+      const simple = simpleAt.get(n.beat);
+      if (!simple) { texts.forEach(t => t.setAttribute("visibility", "hidden")); return; }
+      const want = twoRows() ? [`(${capoShape(simple)})`, chordName(simple)] : [chordName(simple)];
+      texts.forEach((t, i) => { if (want[i] && t.textContent !== want[i]) t.textContent = want[i]; });
+    });
+  }
   paintMine();
   if (cueNote) cueNote.els.forEach(e => e.classList.add("cue"));
 }
