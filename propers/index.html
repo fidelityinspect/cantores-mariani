@@ -56,23 +56,17 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
 .gospel { margin: 0; color: var(--muted); font-size: 17px; }
 .focus { margin: 0; padding: 10px 14px; border-left: 3px solid var(--gold-soft); background: color-mix(in srgb, var(--gold-soft) 10%, transparent); border-radius: 0 8px 8px 0; }
 .focus b { font-family: var(--ui); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin-right: 6px; }
-.chants { display: grid; gap: 18px; }
-.chant { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 6px 18px; border-top: 1px solid var(--rule); padding-top: 14px; }
-.chant .part { font-family: var(--ui); font-weight: 600; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); margin: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.badge { font-family: var(--ui); font-size: 11px; letter-spacing: .06em; text-transform: none; font-weight: 600; background: var(--gold-soft); color: var(--gold-ink); padding: 2px 8px; border-radius: 999px; }
-.latin { font-style: italic; color: var(--muted); font-size: 16px; margin: 0; }
-.text { margin: 0; font-size: 19px; max-width: 60ch; }
-.text-col { display: grid; gap: 4px; align-content: start; min-width: 0; }
-.vid { grid-column: 2; grid-row: 1 / span 2; position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 8px; overflow: hidden; background: #000; border: 0; padding: 0; cursor: pointer; }
-.vid img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .88; }
-.vid span { position: absolute; inset: auto 8px 8px auto; font-family: var(--ui); font-size: 12px; font-weight: 600; background: rgba(0,0,0,.72); color: #fff; padding: 4px 9px; border-radius: 999px; }
-.vid iframe { width: 100%; height: 100%; border: 0; display: block; }
-.score { justify-self: start; font-family: var(--ui); font-size: 14px; font-weight: 600; text-decoration: none; background: var(--gold-soft); color: var(--gold-ink); padding: 9px 16px; border-radius: 999px; }
+.chants { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.chants a { display: flex; align-items: baseline; gap: 10px; min-width: 0; padding: 11px 2px; border-bottom: 1px solid var(--rule); text-decoration: none; color: var(--fg); font-size: 17px; }
+.chants a:hover .t { text-decoration: underline; }
+.chants .p { font-family: var(--ui); font-weight: 600; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); flex: none; width: 92px; }
+.chants .t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; }
+.badge { flex: none; font-family: var(--ui); font-size: 11px; letter-spacing: .06em; font-weight: 600; background: var(--gold-soft); color: var(--gold-ink); padding: 2px 8px; border-radius: 999px; }
+.chants .go { flex: none; font-family: var(--ui); font-size: 13px; color: var(--muted); }
 .later { justify-self: center; font-family: var(--ui); font-size: 14px; color: var(--navy); background: var(--surface); border: 1px solid var(--rule); padding: 9px 18px; border-radius: 999px; cursor: pointer; }
 @media (max-width: 620px) {
-  .chant { grid-template-columns: minmax(0, 1fr); }
   .week { padding: 16px; }
-  .vid { grid-column: 1; grid-row: auto; }
+  .chants .p { width: auto; }
 }
 footer { font-family: var(--ui); font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; display: grid; gap: 6px; }
 footer p { margin: 0; }
@@ -134,7 +128,7 @@ footer p { margin: 0; }
 </div>
 
 <script>
-// Renders each Sunday from plan.json: this week's focus, the three propers with text and practice video, and the score PDF.
+// Renders each Sunday from plan.json: this week's focus, the three propers as one-line video links, and the score PDF.
 (async () => {
   const box = document.getElementById("weeks");
   let plan;
@@ -145,44 +139,26 @@ footer p { margin: 0; }
   const days = plan.days.filter(d => d.propers && new Date(d.date + "T00:00:00") >= today);
   if (!days.length) { box.innerHTML = '<p class="gospel">The next weeks will be posted soon.</p>'; return; }
   const NAMES = { introit: "Introit", offertory: "Offertory", communion: "Communion" };
-  const ytId = u => (u.match(/[?&]v=([\w-]{11})/) || [])[1];
   const SHOW = 4;
   box.innerHTML = days.map((d, i) => {
     const t = new Date(d.date + "T00:00:00");
     const when = t.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
     const sing = d.sing || [];
     const chants = Object.keys(NAMES).map(k => {
-      const p = d.propers[k], id = ytId(p.video);
-      return `<div class="chant">
-        <div class="text-col">
-          <p class="part">${NAMES[k]}${sing.includes(k) ? '<span class="badge">Schola sings</span>' : ""}</p>
-          <p class="latin">${esc(p.latin)} · ${esc(p.ref)}</p>
-          <p class="text">${esc(p.text)}</p>
-        </div>
-        ${id ? `<button class="vid" data-id="${id}" aria-label="Play the ${NAMES[k]} practice video"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span>▶ Practice video</span></button>` : ""}
-      </div>`;
+      const p = d.propers[k];
+      return `<a href="${esc(p.video)}" target="_blank" rel="noopener" title="${esc(p.text)}">
+        <span class="p">${NAMES[k]}</span><span class="t">${esc(p.latin)}</span>${sing.includes(k) ? '<span class="badge">We sing</span>' : ""}<span class="go">▶ Video</span></a>`;
     }).join("");
     return `<article class="week${i === 0 ? " now" : ""}" id="${d.date}"${i >= SHOW ? " hidden" : ""}>
       <p class="when">${i === 0 ? (t.getTime() === today.getTime() ? "Today · " : "Next · ") : ""}${when}</p>
       <h3>${esc(d.title)}</h3>
       <p class="gospel">${esc(d.gospel || "")}</p>
       ${d.focus ? `<p class="focus"><b>This week</b>${esc(d.focus)}</p>` : ""}
-      <div class="chants">${chants}</div>
-      <a class="score" href="${esc(d.score)}" target="_blank" rel="noopener">Score with psalm verses (PDF) ↗</a>
+      <div class="chants">${chants}<a href="${esc(d.score)}" target="_blank" rel="noopener"><span class="p">Score</span><span class="t" style="font-style:normal">All three, with psalm verses</span><span class="go">PDF ↗</span></a></div>
     </article>`;
   }).join("") + (days.length > SHOW ? '<button class="later" id="later">Show later weeks</button>' : "");
   const later = document.getElementById("later");
   if (later) later.addEventListener("click", () => { box.querySelectorAll(".week[hidden]").forEach(w => w.hidden = false); later.remove(); });
-  box.addEventListener("click", e => {
-    const b = e.target.closest(".vid[data-id]"); if (!b) return;
-    const f = document.createElement("iframe");
-    f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1`;
-    f.title = b.getAttribute("aria-label").replace("Play the ", "");
-    f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true;
-    f.referrerPolicy = "strict-origin-when-cross-origin";
-    const frame = document.createElement("div"); frame.className = "vid"; frame.appendChild(f);
-    b.replaceWith(frame);
-  });
   // open a linked week (e.g. from the home page) even if it is past the first four
   const target = location.hash && document.getElementById(location.hash.slice(1));
   if (target) { if (target.hidden) later && later.click(); target.scrollIntoView(); }
