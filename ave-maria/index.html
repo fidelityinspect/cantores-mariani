@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Practice your part of Arcadelt's Ave Maria, men's TTB or mixed SATB, with piano and guitar chords.">
+<meta name="description" content="Practice your part of Arcadelt's Ave Maria, men's TTBB or mixed SATB, with piano and guitar chords.">
 <meta property="og:title" content="Cantores Mariani">
-<meta property="og:description" content="Practice your part of Arcadelt's Ave Maria, men's TTB or mixed SATB, with piano and guitar chords.">
+<meta property="og:description" content="Practice your part of Arcadelt's Ave Maria, men's TTBB or mixed SATB, with piano and guitar chords.">
 <meta property="og:image" content="seal.png">
 <link rel="icon" type="image/png" href="seal.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -155,7 +155,7 @@ button { font: inherit; cursor: pointer; }
 .tracks h3 { font-family: var(--display); font-size: 13px; letter-spacing: .2em; color: var(--gold); margin: 0; font-weight: 500; text-transform: uppercase; }
 .tracks-lbl { margin: 10px 0 8px; font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--fg); }
 .tracks-lbl span { font-weight: 400; color: var(--muted); }
-#tracks-ttb .tracks-lbl:first-child { margin-top: 0; }
+#tracks-ttbb .tracks-lbl:first-child { margin-top: 0; }
 .tracks-note { margin: 0; color: var(--muted); font-family: var(--ui); font-size: 13px; }
 .track-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .track-row a {
@@ -189,7 +189,7 @@ footer a { color: var(--navy); }
   <section class="piece" aria-labelledby="piece-title">
     <div class="piece-head">
       <h2 id="piece-title">Ave Maria</h2>
-      <p class="attrib"><b>Jacob Arcadelt</b> (c. 1505–1568), arr. <b>Pierre-Louis Dietsch</b> (1808–1865) · <span id="arr-label">TTB · G major (men's voices)</span></p>
+      <p class="attrib"><b>Jacob Arcadelt</b> (c. 1505–1568), arr. <b>Pierre-Louis Dietsch</b> (1808–1865) · <span id="arr-label">TTBB · G major (men's voices)</span></p>
     </div>
 
     <p class="status" id="status" aria-live="polite">Tap any note to hear it. Playback then starts from that note.</p>
@@ -201,9 +201,10 @@ footer a { color: var(--navy); }
 
   <section class="tracks" aria-labelledby="tracks-title">
     <h3 id="tracks-title">Hear it sung</h3>
-    <div id="tracks-ttb">
-      <p class="tracks-lbl">Men's choirs singing it <span>(John Leavitt's TTBB edition, so a few harmonies differ)</span></p>
+    <div id="tracks-ttbb">
+      <p class="tracks-lbl">Men's choirs singing it <span>(other TTBB editions, so a few harmonies differ)</span></p>
       <div class="track-row">
+        <a href="https://www.youtube.com/watch?v=UkNBRReEbXg" target="_blank" rel="noopener">Rocky Mountain Chamber Choir</a>
         <a href="https://www.youtube.com/watch?v=6rusv3zVg3Y" target="_blank" rel="noopener">CHS Men's Chorus</a>
         <a href="https://www.youtube.com/watch?v=UTaCA9d1F_8" target="_blank" rel="noopener">M. S. Williams, men's choir</a>
       </div>
@@ -211,7 +212,8 @@ footer a { color: var(--navy); }
       <div class="track-row">
         <a href="https://www.youtube.com/watch?v=IJQYZl2zm_8" target="_blank" rel="noopener">Tenor I</a>
         <a href="https://www.youtube.com/watch?v=o8jm8BQ5Yeg" target="_blank" rel="noopener">Tenor II</a>
-        <a href="https://www.youtube.com/watch?v=OnDTUkSkAa0" target="_blank" rel="noopener">Bass</a>
+        <a href="https://www.youtube.com/watch?v=OnDTUkSkAa0" target="_blank" rel="noopener">Bass I</a>
+        <a href="https://www.youtube.com/watch?v=O-j2xUlQTfU" target="_blank" rel="noopener">Bass II</a>
       </div>
     </div>
     <div id="tracks-satb" hidden>
@@ -241,7 +243,7 @@ footer a { color: var(--navy); }
     <div class="settings" id="settings" hidden>
       <div class="group" aria-label="Choir">
         <span class="label">Choir</span>
-        <button class="chip" id="arr-ttb" data-arr="ttb" aria-pressed="true">Men (TTB)</button>
+        <button class="chip" id="arr-ttbb" data-arr="ttbb" aria-pressed="true">Men (TTBB)</button>
         <button class="chip" id="arr-satb" data-arr="satb" aria-pressed="false">Mixed (SATB)</button>
       </div>
       <label class="tempo" for="vol-mine"><span class="label" id="vol-mine-label">Your part</span>
@@ -341,17 +343,19 @@ const LINES = [
     w: "san- _ cta Ma- ri- a, | o- ra, o- ra _ pro _ no- bis." }
 ];
 // ---------- Arrangements: the same four printed lines, regrouped for the choir ----------
-// Men (TTB): Arcadelt's own three voices (soprano, alto, tenor lines) an octave down, raised to G major.
+// Men (TTBB): soprano, alto and tenor lines an octave down for Tenor I, Tenor II and Bass I, raised to G major.
+// Bass II is Dietsch's bass line an octave down too; any note that would fall below low C (C2) goes up an octave.
 const ARRS = {
   satb: { label: "SATB · E♭ major", trans: 0, steps: 0, key: "Eb", sig: { B: -1, E: -1, A: -1 }, sharps: false, score: "{(V0 V1) | (V2 V3)}", voices: [
     { name: "Soprano", src: 0, oct: 0, clef: "treble", stem: "up", form: 0 },
     { name: "Alto", src: 1, oct: 0, clef: "treble", stem: "down", form: 1 },
     { name: "Tenor", src: 2, oct: 0, clef: "bass", stem: "up", form: 2 },
     { name: "Bass", src: 3, oct: 0, clef: "bass", stem: "down", form: 3 }] },
-  ttb: { label: "TTB · G major (men's voices)", trans: 4, steps: 2, key: "G", sig: { F: 1 }, sharps: true, score: "{(V0 V1) | V2}", voices: [
+  ttbb: { label: "TTBB · G major (men's voices)", trans: 4, steps: 2, key: "G", sig: { F: 1 }, sharps: true, score: "{(V0 V1) | (V2 V3)}", voices: [
     { name: "Tenor I", src: 0, oct: -1, clef: "treble-8", stem: "up", form: 2 },
     { name: "Tenor II", src: 1, oct: -1, clef: "treble-8", stem: "down", form: 2 },
-    { name: "Bass", src: 2, oct: -1, clef: "bass", stem: "auto", form: 3 }] }
+    { name: "Bass I", src: 2, oct: -1, clef: "bass", stem: "up", form: 3 },
+    { name: "Bass II", src: 3, oct: -1, floor: 36, clef: "bass", stem: "down", form: 3 }] }
 };
 let arrKey = "satb", ARR = ARRS.satb, PART_NAMES = [];
 
@@ -438,8 +442,9 @@ function build(key) {
         const m = tok.match(/^([A-G])(b|n)?(\d)(?::([\d.]+))?(!)?$/);
         if (!m) throw new Error("Bad token " + tok);
         const [, letter, acc, o, d, f] = m;
-        const dur = d ? parseFloat(d) : 1, oct = +o + vd.oct;
-        const midi = 12 * (oct + 1) + BASE[letter] + (acc === "b" ? -1 : 0) + ARR.trans;
+        const dur = d ? parseFloat(d) : 1;
+        let oct = +o + vd.oct, midi = 12 * (oct + 1) + BASE[letter] + (acc === "b" ? -1 : 0) + ARR.trans;
+        if (vd.floor && midi < vd.floor) { oct++; midi += 12; }   // keep the bass in reach
         const shown = oct + (vd.clef === "treble-8" ? 1 : 0);          // tenor clef is written an octave up
         const LET = "CDEFGAB", idx = LET.indexOf(letter) + ARR.steps;
         const wl = LET[idx % 7], wo = shown + Math.floor(idx / 7);
@@ -484,7 +489,7 @@ function build(key) {
     });
   });
 }
-build("ttb");
+build("ttbb");
 
 // ---------- Timing (fermatas held a little longer) ----------
 const tempoEl = document.getElementById("tempo");
@@ -809,13 +814,13 @@ function setArrangement(key) {
   part = -1; fillParts(); syncVolumeLabels(); applyMix();
   if (ctx) voiceIn = voiceGain.map((g, v) => vowel(v, g));
   document.getElementById("arr-label").textContent = ARR.label;
-  document.getElementById("tracks-ttb").hidden = key !== "ttb";
+  document.getElementById("tracks-ttbb").hidden = key !== "ttbb";
   document.getElementById("tracks-satb").hidden = key !== "satb";
   document.querySelectorAll("[data-arr]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.arr === key)));
   layout = ""; render();
   chooseSection(sec); chordNote();
-  statusEl.textContent = key === "ttb"
-    ? "Men's version: Tenor I takes the melody, Tenor II the middle line, Bass the low line, in G major."
+  statusEl.textContent = key === "ttbb"
+    ? "Men's version: Tenor I takes the melody, Tenor II and Bass I the middle lines, Bass II the low line, in G major."
     : "Mixed choir version: soprano, alto, tenor and bass, in E♭ major, as printed.";
 }
 document.querySelectorAll("[data-arr]").forEach(b => b.addEventListener("click", () => setArrangement(b.dataset.arr)));
