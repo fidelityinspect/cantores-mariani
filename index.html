@@ -71,10 +71,6 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
 .go:focus-visible { outline: 2px solid var(--navy); outline-offset: 3px; }
 .soon { margin: 12px 2px 0; color: var(--muted); font-size: 16px; font-style: italic; }
 
-.how { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.how li { min-width: 0; }
-.how b { display: block; font-family: var(--display); font-weight: 500; color: var(--navy); font-size: 17px; letter-spacing: .04em; margin-bottom: 2px; }
-.how span { color: var(--muted); font-size: 17px; }
 
 .statements { border-top: 1px solid var(--gold-soft); border-bottom: 1px solid var(--gold-soft); padding: 30px 8px 32px; display: grid; gap: 26px; justify-items: center; text-align: center; }
 .stmt { display: grid; gap: 12px; justify-items: center; }
@@ -106,8 +102,7 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
 @media (max-width: 600px) {
   .piece { grid-template-columns: 1fr; }
   .go { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 8px; }
-  .how { grid-template-columns: 1fr; gap: 12px; }
-}
+  }
 </style>
 </head>
 <body>
@@ -151,16 +146,6 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
       </li>
     </ul>
     <p class="soon">More pieces are on the way.</p>
-  </section>
-
-  <section aria-labelledby="how-h">
-    <h2 id="how-h">How to practice</h2>
-    <ol class="how">
-      <li><b>Pick your part</b><span>Your notes turn blue, and the other voices play softly underneath.</span></li>
-      <li><b>Learn a section</b><span>Choose one phrase and it repeats until you have it.</span></li>
-      <li><b>Tap any note</b><span>Hear the pitch, and playback starts from there.</span></li>
-      <li><b>New to singing parts?</b><span>Learn the melody first (Tenor I for men, Soprano for mixed choir). Then add the bass line, then the middle parts.</span></li>
-    </ol>
   </section>
 
   <section class="watch" aria-labelledby="watch-h">

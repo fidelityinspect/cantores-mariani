@@ -68,6 +68,18 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
   .week { padding: 16px; }
   .chants .p { width: auto; }
 }
+/* "How to practice" popover: a tap target, since hover tooltips do not work on phones */
+.tip { position: relative; font-family: var(--ui); }
+.tip summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--navy); border: 1px solid var(--rule); background: var(--surface); padding: 6px 12px; border-radius: 999px; }
+.tip summary::-webkit-details-marker { display: none; }
+.tip summary::before { content: "?"; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--gold-soft); color: #1d1a12; font-size: 12px; }
+.tip[open] summary { border-color: var(--gold-soft); }
+.tip .pop { position: absolute; z-index: 20; top: calc(100% + 8px); left: 0; width: min(340px, calc(100vw - 32px)); background: var(--surface); color: var(--fg); border: 1px solid var(--rule); border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 14px 16px; }
+.tip ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 15px; line-height: 1.45; }
+.tip ol b { color: var(--navy); }
+/* in the header the popover anchors to the whole header, so it stays on screen */
+header { position: relative; }
+header .tip { position: static; margin-top: 8px; }
 footer { font-family: var(--ui); font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; display: grid; gap: 6px; }
 footer p { margin: 0; }
 </style>
@@ -79,12 +91,18 @@ footer p { margin: 0; }
     <div>
       <h1>Sunday Propers</h1>
       <p class="sub">The Church's own chants for each Sunday, from the Simple English Propers</p>
+      <details class="tip"><summary>How to practice</summary><div class="pop"><ol>
+        <li><b>Read the words aloud</b> slowly, as if proclaiming them. That is the rhythm of the chant.</li>
+        <li><b>Watch the video three times:</b> listen, then hum along, then sing along with the score open.</li>
+        <li><b>Sing it alone</b> once without the video. Mark any spot that trips you and go back to just that line.</li>
+        <li><b>Come to rehearsal</b> ready to sing it through. We put it together there and sing it on Sunday.</li>
+      </ol></div></details>
     </div>
   </header>
 
   <section class="learn" aria-labelledby="learn-h">
     <h2 id="learn-h">How to sing the propers</h2>
-    <details open>
+    <details>
       <summary>What the propers are</summary>
       <p>Every Mass has its own three chants, assigned by the Church: the <b>Introit</b> as the procession enters, the <b>Offertory</b> while the gifts are prepared, and the <b>Communion</b> during Holy Communion. Their words come from Scripture, mostly the Psalms, and they change every Sunday. These are the chants the Council gave "pride of place." The Simple English Propers set them in English, in plain chant that a beginner can learn in a week.</p>
     </details>
@@ -103,15 +121,6 @@ footer p { margin: 0; }
         <li>The cantor begins the <b>antiphon</b>; all join at the <span class="star">*</span>.</li>
         <li>The cantor (or half the schola) sings a <b>psalm verse</b> on a simple repeated tone. The <span class="star">*</span> in a verse is a short breath at the middle.</li>
         <li>All sing the antiphon again. Repeat verses and antiphon until the procession or Communion is finished, ending with "Glory be" and a last antiphon.</li>
-      </ol>
-    </details>
-    <details>
-      <summary>Your week, step by step</summary>
-      <ol>
-        <li><b>Read the words aloud</b> slowly, as if proclaiming them. That is the rhythm of the chant.</li>
-        <li><b>Watch the practice video three times:</b> listen, then hum along, then sing along with the score open.</li>
-        <li><b>Sing it alone</b> once without the video. Mark any spot that trips you and go back to just that line.</li>
-        <li><b>Come to rehearsal</b> ready to sing it through. We put it together there and sing it on Sunday.</li>
       </ol>
     </details>
   </section>
@@ -164,5 +173,7 @@ footer p { margin: 0; }
   if (target) { if (target.hidden) later && later.click(); target.scrollIntoView(); }
 })();
 </script>
+<script>// close the "How to practice" popover on a tap outside it
+document.addEventListener("click", e => document.querySelectorAll(".tip[open]").forEach(t => { if (!t.contains(e.target)) t.open = false; }));</script>
 </body>
 </html>

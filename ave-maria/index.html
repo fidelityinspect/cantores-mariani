@@ -173,6 +173,15 @@ button { font: inherit; cursor: pointer; }
 .text .la { font-style: italic; }
 @media (max-width: 640px) { .text { grid-template-columns: 1fr; } body { font-size: 18px; } .tempo input { width: 96px; } }
 
+/* "How to practice" popover: a tap target, since hover tooltips do not work on phones */
+.tip { position: relative; font-family: var(--ui); }
+.tip summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--navy); border: 1px solid var(--rule); background: var(--surface); padding: 6px 12px; border-radius: 999px; }
+.tip summary::-webkit-details-marker { display: none; }
+.tip summary::before { content: "?"; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--gold-soft); color: #1d1a12; font-size: 12px; }
+.tip[open] summary { border-color: var(--gold-soft); }
+.tip .pop { position: absolute; z-index: 20; top: calc(100% + 8px); left: 0; width: min(340px, calc(100vw - 32px)); background: var(--surface); color: var(--fg); border: 1px solid var(--rule); border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 14px 16px; }
+.tip ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 15px; line-height: 1.45; }
+.tip ol b { color: var(--navy); }
 footer { color: var(--muted); font-size: 15px; border-top: 1px solid var(--rule); padding-top: 16px; display: grid; gap: 6px; }
 footer a { color: var(--navy); }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
@@ -190,6 +199,12 @@ footer a { color: var(--navy); }
     <div class="piece-head">
       <h2 id="piece-title">Ave Maria</h2>
       <p class="attrib"><b>Jacob Arcadelt</b> (c. 1505–1568), arr. <b>Pierre-Louis Dietsch</b> (1808–1865) · <span id="arr-label">TTBB · G major (men's voices)</span></p>
+      <details class="tip"><summary>How to practice</summary><div class="pop"><ol>
+        <li><b>Pick your part.</b> Your notes turn blue, and the other voices play softly underneath.</li>
+        <li><b>Learn a section.</b> Choose one phrase and it repeats until you have it.</li>
+        <li><b>Tap any note</b> to hear the pitch; playback starts from there.</li>
+        <li><b>New to singing parts?</b> Learn the melody first (Tenor I for men, Soprano for mixed choir), then the bass line, then the middle parts.</li>
+      </ol></div></details>
     </div>
 
     <p class="status" id="status" aria-live="polite">Tap any note to hear it. Playback then starts from that note.</p>
@@ -897,5 +912,7 @@ fillParts();
 render(); chordNote();
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 200); });
 </script>
+<script>// close the "How to practice" popover on a tap outside it
+document.addEventListener("click", e => document.querySelectorAll(".tip[open]").forEach(t => { if (!t.contains(e.target)) t.open = false; }));</script>
 </body>
 </html>
