@@ -95,6 +95,7 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spac
 .day .gospel { margin: 0; color: var(--muted); font-size: 16px; font-style: italic; }
 .music { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 3px; }
 .music li { font-size: 17px; }
+.music .sing { font-family: var(--ui); font-size: 11px; font-weight: 600; background: var(--gold-soft); color: var(--gold-ink); padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
 .music .part { font-family: var(--ui); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); display: inline-block; min-width: 92px; }
 .music a { color: var(--navy); }
 .music .num { color: var(--muted); font-size: 15px; }
@@ -144,6 +145,12 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
   <section aria-labelledby="practice-h">
     <h2 id="practice-h">Practice</h2>
     <ul class="pieces">
+      <li class="piece">
+        <h3>Sunday Propers</h3>
+        <p class="by">Introit, Offertory and Communion for each Sunday · <b>Simple English Propers</b></p>
+        <div class="tags"><span class="tag">Chant</span><span class="tag">Text, practice video and score</span><span class="tag">This week's focus</span></div>
+        <a class="go" href="propers/">Practice →</a>
+      </li>
       <li class="piece">
         <h3>Ave Maria</h3>
         <p class="by"><b>Jacob Arcadelt</b>, arr. <b>Pierre-Louis Dietsch</b></p>
@@ -200,8 +207,8 @@ footer .tr { color: var(--muted); font-size: 15px; font-style: italic; }
     const t = new Date(d.date + "T00:00:00");
     const mo = t.toLocaleString("en-US", { month: "short" }), dw = t.toLocaleString("en-US", { weekday: "short" });
     const music = d.music && d.music.length
-      ? '<ul class="music">' + d.music.map(m => `<li><span class="part">${esc(m.part)}</span> ${m.practice ? `<a href="${esc(m.practice)}">${esc(m.title)}</a>` : esc(m.title)}${m.hymnal ? ` <span class="num">${esc(m.hymnal)}</span>` : ""}</li>`).join("") + "</ul>"
-      : '<p class="tbp">Hymns and Mass parts to be posted.</p>';
+      ? '<ul class="music">' + d.music.map(m => `<li><span class="part">${esc(m.part)}</span> ${m.practice ? `<a href="${esc(m.practice)}">${esc(m.title)}</a>` : esc(m.title)}${m.hymnal ? ` <span class="num">${esc(m.hymnal)}</span>` : ""}${m.schola ? ' <span class="sing">Schola sings</span>' : ""}</li>`).join("") + "</ul>"
+      : '<p class="tbp">Music to be posted.</p>';
     return `<li class="day"><div class="date"><span class="mo">${mo}</span><span class="dd">${t.getDate()}</span><span class="dw">${dw}</span></div><h3>${esc(d.title)}</h3><p class="gospel">${esc(d.gospel || "")}</p>${music}</li>`;
   }).join("");
 })();

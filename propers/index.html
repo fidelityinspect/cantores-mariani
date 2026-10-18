@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="This week's Introit, Offertory and Communion from the Simple English Propers, with text, practice videos and the score.">
+<meta property="og:title" content="Sunday Propers · Cantores Mariani">
+<meta property="og:description" content="This week's Introit, Offertory and Communion from the Simple English Propers, with text, practice videos and the score.">
+<meta property="og:image" content="seal.png">
+<link rel="icon" type="image/png" href="seal.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Sunday Propers</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+/* Layout: a short how-to for new singers, then one card per Sunday with its three chants. */
+:root {
+  --bg: #eef0f4; --surface: #ffffff; --fg: #1a2440; --muted: #56607a; --rule: #d5d9e3;
+  --navy: #1d3461; --gold: #a87d2c; --gold-soft: #c9a24a; --gold-ink: #1a1406;
+  --display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+  --body: "EB Garamond", "Garamond", Georgia, serif;
+  --ui: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1527; --surface: #16203a; --fg: #e9e6dc; --muted: #a3abbf; --rule: #28334f; --navy: #b9c8ea; --gold: #d6b25e; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1527; --surface: #16203a; --fg: #e9e6dc; --muted: #a3abbf; --rule: #28334f; --navy: #b9c8ea; --gold: #d6b25e; color-scheme: dark; }
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 19px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 56px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+a { color: var(--navy); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+header { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
+header img { width: 84px; height: auto; display: block; }
+h1 { font-family: var(--display); font-weight: 700; letter-spacing: .06em; color: var(--navy); font-size: clamp(28px, 6vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; }
+.sub { margin: 4px 0 0; color: var(--muted); font-style: italic; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 13px; letter-spacing: .24em; color: var(--gold); margin: 0 0 14px; text-transform: uppercase; }
+
+.learn { display: grid; gap: 14px; }
+.learn details { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 18px; }
+.learn summary { cursor: pointer; font-family: var(--display); font-weight: 500; color: var(--navy); font-size: 18px; letter-spacing: .03em; }
+.learn details p, .learn details li { margin: 8px 0 0; max-width: 64ch; }
+.learn ol, .learn ul { margin: 6px 0 0; padding-left: 22px; }
+.star { font-family: var(--ui); font-weight: 700; color: var(--gold); }
+
+.week { min-width: 0; background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 20px; display: grid; gap: 14px; scroll-margin-top: 16px; }
+.week.now { border-color: var(--gold-soft); box-shadow: 0 0 0 1px var(--gold-soft); }
+.when { font-family: var(--ui); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin: 0; }
+.week h3 { font-family: var(--display); font-weight: 700; color: var(--navy); font-size: 22px; letter-spacing: .03em; margin: 0; line-height: 1.2; text-wrap: balance; }
+.gospel { margin: 0; color: var(--muted); font-size: 17px; }
+.focus { margin: 0; padding: 10px 14px; border-left: 3px solid var(--gold-soft); background: color-mix(in srgb, var(--gold-soft) 10%, transparent); border-radius: 0 8px 8px 0; }
+.focus b { font-family: var(--ui); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin-right: 6px; }
+.chants { display: grid; gap: 18px; }
+.chant { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 6px 18px; border-top: 1px solid var(--rule); padding-top: 14px; }
+.chant .part { font-family: var(--ui); font-weight: 600; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); margin: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.badge { font-family: var(--ui); font-size: 11px; letter-spacing: .06em; text-transform: none; font-weight: 600; background: var(--gold-soft); color: var(--gold-ink); padding: 2px 8px; border-radius: 999px; }
+.latin { font-style: italic; color: var(--muted); font-size: 16px; margin: 0; }
+.text { margin: 0; font-size: 19px; max-width: 60ch; }
+.text-col { display: grid; gap: 4px; align-content: start; min-width: 0; }
+.vid { grid-column: 2; grid-row: 1 / span 2; position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 8px; overflow: hidden; background: #000; border: 0; padding: 0; cursor: pointer; }
+.vid img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .88; }
+.vid span { position: absolute; inset: auto 8px 8px auto; font-family: var(--ui); font-size: 12px; font-weight: 600; background: rgba(0,0,0,.72); color: #fff; padding: 4px 9px; border-radius: 999px; }
+.vid iframe { width: 100%; height: 100%; border: 0; display: block; }
+.score { justify-self: start; font-family: var(--ui); font-size: 14px; font-weight: 600; text-decoration: none; background: var(--gold-soft); color: var(--gold-ink); padding: 9px 16px; border-radius: 999px; }
+.later { justify-self: center; font-family: var(--ui); font-size: 14px; color: var(--navy); background: var(--surface); border: 1px solid var(--rule); padding: 9px 18px; border-radius: 999px; cursor: pointer; }
+@media (max-width: 620px) {
+  .chant { grid-template-columns: minmax(0, 1fr); }
+  .week { padding: 16px; }
+  .vid { grid-column: 1; grid-row: auto; }
+}
+footer { font-family: var(--ui); font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; display: grid; gap: 6px; }
+footer p { margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="../" aria-label="Cantores Mariani home"><img src="seal.png" alt="Cantores Mariani seal" width="480" height="480"></a>
+    <div>
+      <h1>Sunday Propers</h1>
+      <p class="sub">The Church's own chants for each Sunday, from the Simple English Propers</p>
+    </div>
+  </header>
+
+  <section class="learn" aria-labelledby="learn-h">
+    <h2 id="learn-h">How to sing the propers</h2>
+    <details open>
+      <summary>What the propers are</summary>
+      <p>Every Mass has its own three chants, assigned by the Church: the <b>Introit</b> as the procession enters, the <b>Offertory</b> while the gifts are prepared, and the <b>Communion</b> during Holy Communion. Their words come from Scripture, mostly the Psalms, and they change every Sunday. These are the chants the Council gave "pride of place." The Simple English Propers set them in English, in plain chant that a beginner can learn in a week.</p>
+    </details>
+    <details>
+      <summary>Reading the page</summary>
+      <ul>
+        <li>The music has <b>four lines</b>, not five. The clef at the start marks one line as C (or F); every other note follows from it.</li>
+        <li>Notes are square. Two notes stacked on one syllable: sing the <b>lower one first</b>.</li>
+        <li>There is no beat to count. Chant moves at the speed of <b>careful speech</b>, so the words set the rhythm.</li>
+        <li>The <span class="star">*</span> in the antiphon marks where everyone joins: the cantor sings up to it alone, then all sing the rest.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>How each chant goes at Mass</summary>
+      <ol>
+        <li>The cantor begins the <b>antiphon</b>; all join at the <span class="star">*</span>.</li>
+        <li>The cantor (or half the schola) sings a <b>psalm verse</b> on a simple repeated tone. The <span class="star">*</span> in a verse is a short breath at the middle.</li>
+        <li>All sing the antiphon again. Repeat verses and antiphon until the procession or Communion is finished, ending with "Glory be" and a last antiphon.</li>
+      </ol>
+    </details>
+    <details>
+      <summary>Your week, step by step</summary>
+      <ol>
+        <li><b>Read the words aloud</b> slowly, as if proclaiming them. That is the rhythm of the chant.</li>
+        <li><b>Watch the practice video three times:</b> listen, then hum along, then sing along with the score open.</li>
+        <li><b>Sing it alone</b> once without the video. Mark any spot that trips you and go back to just that line.</li>
+        <li><b>Come to rehearsal</b> ready to sing it through. We put it together there and sing it on Sunday.</li>
+      </ol>
+    </details>
+  </section>
+
+  <section aria-labelledby="weeks-h">
+    <h2 id="weeks-h">Week by week</h2>
+    <div id="weeks" style="display:grid;grid-template-columns:minmax(0,1fr);gap:18px"><p class="gospel">Loading the plan…</p></div>
+  </section>
+
+  <footer>
+    <p><b>Simple English Propers</b> by Adam Bartlett, © 2011 Church Music Association of America, licensed in the Creative Commons. Antiphon translations by Solesmes Abbey (Creative Commons). Psalm verses in the score PDFs are from the Revised Grail Psalter. <a href="https://churchmusicassociation.org/sep/" target="_blank" rel="noopener">CMAA: Simple English Propers ↗</a></p>
+    <p>Practice videos by Jeff Ostrowski, Corpus Christi Watershed, listed by the CMAA. <a href="https://churchmusicassociation.org/sep/videos/" target="_blank" rel="noopener">All practice videos ↗</a></p>
+  </footer>
+</div>
+
+<script>
+// Renders each Sunday from plan.json: this week's focus, the three propers with text and practice video, and the score PDF.
+(async () => {
+  const box = document.getElementById("weeks");
+  let plan;
+  try { plan = await (await fetch("../plan.json", { cache: "no-store" })).json(); }
+  catch (e) { box.innerHTML = '<p class="gospel">The plan could not be loaded. Try again in a moment.</p>'; return; }
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const today = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })); today.setHours(0, 0, 0, 0);
+  const days = plan.days.filter(d => d.propers && new Date(d.date + "T00:00:00") >= today);
+  if (!days.length) { box.innerHTML = '<p class="gospel">The next weeks will be posted soon.</p>'; return; }
+  const NAMES = { introit: "Introit", offertory: "Offertory", communion: "Communion" };
+  const ytId = u => (u.match(/[?&]v=([\w-]{11})/) || [])[1];
+  const SHOW = 4;
+  box.innerHTML = days.map((d, i) => {
+    const t = new Date(d.date + "T00:00:00");
+    const when = t.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+    const sing = d.sing || [];
+    const chants = Object.keys(NAMES).map(k => {
+      const p = d.propers[k], id = ytId(p.video);
+      return `<div class="chant">
+        <div class="text-col">
+          <p class="part">${NAMES[k]}${sing.includes(k) ? '<span class="badge">Schola sings</span>' : ""}</p>
+          <p class="latin">${esc(p.latin)} · ${esc(p.ref)}</p>
+          <p class="text">${esc(p.text)}</p>
+        </div>
+        ${id ? `<button class="vid" data-id="${id}" aria-label="Play the ${NAMES[k]} practice video"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span>▶ Practice video</span></button>` : ""}
+      </div>`;
+    }).join("");
+    return `<article class="week${i === 0 ? " now" : ""}" id="${d.date}"${i >= SHOW ? " hidden" : ""}>
+      <p class="when">${i === 0 ? (t.getTime() === today.getTime() ? "Today · " : "Next · ") : ""}${when}</p>
+      <h3>${esc(d.title)}</h3>
+      <p class="gospel">${esc(d.gospel || "")}</p>
+      ${d.focus ? `<p class="focus"><b>This week</b>${esc(d.focus)}</p>` : ""}
+      <div class="chants">${chants}</div>
+      <a class="score" href="${esc(d.score)}" target="_blank" rel="noopener">Score with psalm verses (PDF) ↗</a>
+    </article>`;
+  }).join("") + (days.length > SHOW ? '<button class="later" id="later">Show later weeks</button>' : "");
+  const later = document.getElementById("later");
+  if (later) later.addEventListener("click", () => { box.querySelectorAll(".week[hidden]").forEach(w => w.hidden = false); later.remove(); });
+  box.addEventListener("click", e => {
+    const b = e.target.closest(".vid[data-id]"); if (!b) return;
+    const f = document.createElement("iframe");
+    f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1`;
+    f.title = b.getAttribute("aria-label").replace("Play the ", "");
+    f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true;
+    f.referrerPolicy = "strict-origin-when-cross-origin";
+    const frame = document.createElement("div"); frame.className = "vid"; frame.appendChild(f);
+    b.replaceWith(frame);
+  });
+  // open a linked week (e.g. from the home page) even if it is past the first four
+  const target = location.hash && document.getElementById(location.hash.slice(1));
+  if (target) { if (target.hidden) later && later.click(); target.scrollIntoView(); }
+})();
+</script>
+</body>
+</html>
